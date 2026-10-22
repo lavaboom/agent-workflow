@@ -227,7 +227,8 @@ plays them.
 - **The manager** is the planner, the claimer, the reviewer of record and the closer. It claims
   (`Owner: claude:manager`; the claim commit, the worktree and its preparation's copy step), writes the brief,
   the specs and the plans on master, dispatches a subagent per plan task and per review, writes down the
-  follow-ups a report names ("Small tasks and follow-ups", on master, at once), merges with
+  follow-ups a report names ("Small tasks and follow-ups", on master, at once), never runs two tasks at
+  once that share a path in `Touches:` (owner, 2026-10-22), merges with
   the project's merge command, closes, and keeps its own state in `docs/manager/board.md` (a docs file on
   master, changed only from the main checkout, like the roadmap). It reads reports, never code or diffs.
 - **A builder subagent** is the builder of one plan task or one small task: it runs the install step of

@@ -116,7 +116,9 @@ left, a stop below, or the owner says pause:
    database already runs continues.
 2. Plan budget: when the 5-hour window is past 85 % and resets in more than 20 minutes, dispatch nothing
    new; write the board and say so. A dead subagent wastes the task; a waiting one costs nothing.
-3. At most three subagents run at once in this tab, one builder per branch.
+3. At most three subagents run at once in this tab, one builder per branch. Two tasks running at once never
+   share a path in their `status.md`'s `Touches:` (owner, 2026-10-22): one that does waits for the other's
+   merge.
 4. **A task's first dispatch:** the manager claims it (protocol → "Claiming": `IN_PROGRESS`,
    `Owner: claude:manager`, the claim commit, `git worktree add`, the copy step of "Prepare a worktree"
    (Workflow settings)). The builder runs the install step of "Prepare a worktree" and, when the plan says so,
