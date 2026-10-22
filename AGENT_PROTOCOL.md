@@ -294,6 +294,7 @@ For the roadmap:
 
 `Owner` is `claude:` or `codex:` plus a short name you pick and say to the owner (for example
 `claude:task-017-review`), so the owner can tell agents apart on the roadmap. Times are UTC.
+`Touches:` is defined in `TASKS.md` (the files in a task folder).
 
 ## Working on a task
 
@@ -309,6 +310,10 @@ For the roadmap:
    "Blocked on: …" in the notes, commit, and stop.
 7. If your session ends before the task is done, write in `status.md` where things stand and the next
    step, or a `handoff-<topic>.md` for anything longer. A new session starts from it.
+8. **Stay in your lane.** Change only the paths your task's `Touches:` names. A fix you need outside them is a
+   follow-up task ("Small tasks and follow-ups"); when the task cannot be done without it, widen `Touches:` in
+   `status.md`, commit that, and say so in your report. Never edit a path another running task's `Touches:` names
+   (owner, 2026-10-22).
 
 ## Finishing a task (builder)
 

@@ -36,6 +36,11 @@ A small task or follow-up is a folder holding only `status.md`, which is its spe
 
 A task with several specs or plans gives each its own topic (`plan-phase-a-prerequisites.md`).
 
+`Touches:` lists the paths the task changes: files, or a folder when most of its files change; the narrowest set
+that is true, on one line. It is written at the claim from the brief or spec and widened when the build needs
+more. The manager reads it to keep running tasks apart: two tasks running at once never share a `Touches:` path
+(owner, 2026-10-22).
+
 ## Linking to a task's documents
 
 A folder moves from `active/` to `completed/` when its task is done, so a link to it changes once.
