@@ -14,7 +14,7 @@ to. The rest of the shared workflow is in `C:/code/agent-workflow/`: `AGENT_PROT
 
 Every piece of code in this project must satisfy three non-negotiable properties, in this order:
 
-1. **Testable** — Logic lives in functions with explicit inputs and outputs. No hidden side effects, no god components. Queries and actions are in dedicated files so they can be tested in isolation without rendering a page.
+1. **Testable** — Logic lives in functions with explicit inputs and outputs. No hidden side effects, no god components. Reads and writes of data live in modules of their own, so a page calls the data layer and the data layer calls the database, and each can be tested in isolation without rendering the page.
 2. **Documentable** — Each module has a single, statable responsibility. If you can't describe what a file does in one sentence, it should be split. File and function names are the primary documentation.
 3. **Human readable** — Prefer boring, explicit code over clever abstractions. A future reader should understand the intent at a glance. Flat is better than nested. Short functions are better than long ones.
 
