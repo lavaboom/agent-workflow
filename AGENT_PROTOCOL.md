@@ -298,7 +298,8 @@ For the roadmap:
 
 ## Working on a task
 
-1. In the worktree, read the task's `status.md`, its spec and its plan.
+1. In the worktree, read the task's `status.md`, its spec and its plan, and the docs the project's "Docs a
+   builder reads for a task" setting names (Workflow settings).
 2. Follow the spec. Change it only when building it shows a real problem; then edit the spec, say what
    changed and why, and date it.
 3. New specs, plans, handoffs and research go in the task folder with their prefix

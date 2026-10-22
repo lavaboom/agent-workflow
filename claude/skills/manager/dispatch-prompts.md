@@ -13,8 +13,9 @@ project's Workflow settings (`AGENTS.md` → "Workflow settings"); paste their v
    (`<the Main checkout setting>`). Run the install step of 'Prepare a worktree' if it has not run (the
    dependencies are missing)." When the plan needs a branch database: "start it there (the Branch database
    setting) if it is not running yet".
-2. **What to read first:** the task folder's `status.md`, the spec, and the plan; then the plan task
-   itself, pasted verbatim (its number, steps, files and tests), or the small task's `status.md` pasted.
+2. **What to read first:** the task folder's `status.md`, the spec, and the plan, and the docs the project's
+   "Docs a builder reads for a task" setting names (Workflow settings); then the plan task itself, pasted
+   verbatim (its number, steps, files and tests), or the small task's `status.md` pasted.
 3. **Decisions already made** that the task touches, each with its tag `(owner, date)` /
    `(manager, date)`, so the builder does not re-decide them.
 4. **Rules it must follow by name:** `WORKFLOW.md` and `AGENTS.md` are loaded; the ones that bite are the
@@ -47,7 +48,8 @@ task asks for, finish it, and commit; revert what it does not. Then continue the
 
 1. **Where:** the worktree and branch; the diff to read: `git diff master...task/task-NNN-<slug>`
    limited to the plan task's commits (name them), plus `status.md`.
-2. **Against what:** the spec sections and the plan task pasted verbatim; the decisions list.
+2. **Against what:** the spec sections and the plan task pasted verbatim; the decisions list; and the docs
+   the project's "Docs a builder reads for a task" setting names (Workflow settings).
 3. **Checks, in order:** spec compliance (does it do what the task says, nothing more); the tests exist
    and prove the behaviour (run them); the code philosophy (`WORKFLOW.md` → testable, documentable,
    readable); the rules in builder step 4; docs updated when the change is visible to users or changes
