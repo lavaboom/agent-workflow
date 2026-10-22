@@ -20,6 +20,10 @@ Every piece of code in this project must satisfy three non-negotiable properties
 
 When these three conflict with brevity or DRY, lean toward readability. Duplication is acceptable; confusion is not.
 
+- **Fix root causes.** No quick fixes, patches or workarounds unless the owner asks for one. A hack that has to
+  stay becomes a task with a deadline (a `BACKLOG` task folder), never a comment or a "later" (owner,
+  2026-10-22).
+
 ## Agent instructions
 
 Before doing any work, read:
