@@ -96,8 +96,9 @@ In short:
   money or devices, or a decision: signing up or signing in, accepting terms, buying, a phone or other device, a
   setting in a dashboard agents may not touch (for example a hosting provider's environment variables), a
   choice. Those are `Q-NNN` items; a step an agent can do with permission is not. The other rules still hold: a
-  paid run needs the owner's yes for that run (the project's cap, Workflow settings → Paid services), and a push
-  or a production promote needs the owner's yes in the session.
+  paid run needs the owner's yes for that run (the project's cap, Workflow settings → Paid services), a push
+  needs what the project's "Who pushes" setting says (owner, 2026-10-22), and a production promote needs the
+  owner's yes in the session.
 - **Until 1.0, tasks are about code, not wording** (owner, 2026-10-03). Don't create tasks, follow-ups or
   owner questions about the wording of public-facing text (pages, UI copy, emails, user docs, blog, legal
   pages), and don't hold work for it: write plain, clear text as you go and move on. Every public-facing

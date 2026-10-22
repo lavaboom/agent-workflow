@@ -131,10 +131,12 @@ left, a stop below, or the owner says pause:
 7. When a task's last plan task is reviewed: dispatch the whole-branch reviewer (`opus-high`, or
    `opus-xhigh` for the project's hard areas, a migration included, or concurrency), with the same fix loop.
    Then merge from the main checkout with the merge command (Workflow settings → Merge) on
-   `task/task-NNN-<slug>` (it queues behind another gate; waiting is normal; never push). If it stops and
+   `task/task-NNN-<slug>` (it queues behind another gate; waiting is normal; it never pushes). If it stops and
    prints a command to run by hand, run that command. Then the close commit (protocol
    → "Reviewing and closing" step 3) with the board in the same commit: the row moves to **Done this
-   week**, follow-ups get their rows, owner questions become `Q-` items, the roadmap moves.
+   week**, follow-ups get their rows, owner questions become `Q-` items, the roadmap moves. Then push only as
+   the project's "Who pushes" setting says (owner, 2026-10-22): when it names the manager after a close, push
+   what it names; when it says "only the owner", never push.
 8. Clean up: `git worktree remove`, `git branch -d`, the branch database cleanup (Workflow settings → Branch
    database). The next release's spec and plan follow, if the brief has one.
 
@@ -160,6 +162,8 @@ A subagent that needs a decision sets `Status: BLOCKED` with `Blocked on: <what>
 When every Running row with a live agent has reported and been recorded, hand off in this order:
 
 1. Write the board (`Last tab stopped at:` with the next step) and commit it (`docs(manager): board`).
+   Then push only as the project's "Who pushes" setting says (owner, 2026-10-22): when it names the manager at
+   a hand-off, push what it names; when it says "only the owner", never push.
 2. If Remote Control is on, turn it off: `set_remote_control` for `self`, `enabled: false`. A session
    serving a Remote Control client cannot be cleared, and the clear drops the link anyway; the next
    tab turns it back on (step 4 of "Every turn").

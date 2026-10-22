@@ -353,7 +353,10 @@ The reviewer claims the task (`REVIEW`, `Owner` = the reviewer) and works in the
    The cleanup deletes the task's throwaway database stack once its worktree is gone. If Windows refuses to
    delete the folder because a session still has it open, say so; the owner closes that session.
 
-Never push master. The owner decides when to push; a push may deploy (the project's `AGENTS.md` says where).
+Push master and task branches only as the project's "Who pushes" setting says (Workflow settings; owner, 2026-10-22):
+it names who pushes, what and when, because that depends on what a push deploys and on how many machines work on
+the project. Where it says "only the owner", never push: the owner decides when, and a push may deploy. A
+production promote always needs the owner's yes in the session.
 
 ## Worktrees
 
