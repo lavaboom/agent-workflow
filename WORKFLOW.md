@@ -113,6 +113,8 @@ In short:
   wording or legal-fact gap is not a review finding. In a merge conflict on these files, take the simplest side
   that compiles and keep the tests passing. At most, note the change once in the task's `status.md` under "For
   the roadmap", for the legal review the owner starts when the product is ready to launch.
+  This covers wording and legal text only: a project's safety rules, privacy rules and product boundaries are not
+  wording and stay in force.
 - **External commercial services cost at most the project's cap** (owner, 2026-10-05; Workflow settings → Paid
   services): any LLM, any other paid API. Before a paid run, estimate it; **a run estimated under the setting's
   no-yes amount needs no yes for that run (owner, 2026-10-10)**, one at or above it does; after, add it to the
