@@ -33,7 +33,10 @@ built at xhigh or the branch is in one of the project's hard areas (a migration 
 1. Read `docs/manager/board.md`, the "In progress" section of `docs/ROADMAP.md`, and the open `Q-`
    headings of `docs/OWNER_QUEUE.md` (`grep -n "^### Q-" docs/OWNER_QUEUE.md`).
 2. Run the capacity command (Workflow settings → Capacity), and `get_usage` for `self`: context %, the 5-hour
-   and weekly usage and their reset times.
+   and weekly usage and their reset times. Two notes (owner, 2026-10-22): from PowerShell, quote the `--` that
+   passes flags through to a script, or PowerShell drops it (the capacity command's JSON form ends in
+   `'--' --json`); and the main checkout needs the install step of "Prepare a worktree" run once before the
+   capacity command runs there (its dependencies are not installed by any claim).
 3. Reconcile the board's **Running** rows with `ListAgents`. A row whose agent is gone (a reload, the
    limit, a closed tab) becomes a resume: run, in that worktree, `git status --short` and
    `git log --oneline master..HEAD`, read `status.md` from the branch, and set the row's note to
