@@ -62,7 +62,10 @@ writes the specs and plans in the manager tab and never runs as a subagent).
 
 ## Whole-branch reviewer (before the merge)
 
-As the reviewer, over the whole `git diff master...task/task-NNN-<slug>`, plus: run the project's builder
+First, before any gate or check (owner, 2026-10-22): merge master into the branch (resolve and commit there),
+and when the merge changed the dependency lockfile, run the install step of "Prepare a worktree" again, so a
+stale install does not fail the gate. Then, as the reviewer, over the whole
+`git diff master...task/task-NNN-<slug>`, plus: run the project's builder
 checks (Workflow settings → Builder checks), the integration files the feature touches, and a browser pass of
 every changed page from the worktree's dev server (protocol → "Shared local services": a port of its
 own, the console read). The same choice of reviewer as above (`opus-high`, or `opus-xhigh` when the branch

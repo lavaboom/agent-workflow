@@ -330,6 +330,9 @@ The reviewer claims the task (`REVIEW`, `Owner` = the reviewer) and works in the
    - Small fixes: make them on the task branch yourself, with tests.
    - Larger changes: write them in `handoff-review.md` on the branch, set `Status: IN_PROGRESS`,
      `Owner: none`, commit, and tell the owner; a builder picks it up again.
+   - **Before any gate**, the reviewer of the whole branch merges master into it and, when that changed the
+     dependency lockfile, runs the install step of "Prepare a worktree" again (owner, 2026-10-22): a stale
+     install fails the gate for nothing.
 2. **Merge**, from the main checkout, with the project's merge command (Workflow settings → Merge) on
    `task/task-NNN-<slug>` (it runs the project's gate and moves master only if that passes). A failed gate is
    fixed on the branch.
