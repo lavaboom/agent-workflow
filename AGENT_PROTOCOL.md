@@ -403,16 +403,19 @@ users and its dev server notes are in its Local services doc (Workflow settings 
     of its own, start it, and **restore the file at once** (it is tracked and shared):
 
     ```json
-    {"name": "task-NNN", "runtimeExecutable": "npm",
-     "runtimeArgs": ["--prefix", "<the worktree's full path, forward slashes>", "run", "dev", "--", "-p", "31NN"],
-     "port": 31NN}
+    {"name": "task-NNN", "runtimeExecutable": "<the project's dev server command>",
+     "runtimeArgs": ["<its arguments: the worktree's full path (forward slashes) and the port option>"],
+     "port": <the task's own port>}
     ```
+
+    The command and the port to use come from the project's Local services doc (Workflow settings → Local
+    services); each task runs its own server, from its own worktree, on a port of its own.
 
     Check `git status --short .claude/launch.json` is clean before adding it, `preview_start` with
     `name: "task-NNN"`, then `git checkout -- .claude/launch.json` right away (the server keeps running).
     Stop it with `preview_stop` when done. Never commit the configuration.
-  - **A terminal (Codex, or the CLI):** run the project's dev server on a port of its own (`-p 31NN`) in the
-    worktree.
+  - **A terminal (Codex, or the CLI):** run the project's dev server (its command and port, from its Local
+    services doc) on a port of its own, in the worktree.
 - **Expect a busy machine.** While iterating, run only the integration files your change touches, at the
   default single worker. Several agents' tests at once make everything slower; a test that times out
   under load is not a flaky test until the project's gate log says so. The project's gate waits for any other
