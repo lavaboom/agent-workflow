@@ -81,7 +81,8 @@ built at xhigh or the branch is in one of the project's hard areas (a migration 
    - what it touches, which existing tasks it absorbs or waits on (`After:`);
    - `Approvals: brief` (the default: specs and plans need no further approval) or `Approvals: brief, spec`
      when the owner asks to see the spec too;
-   - a rough size: releases, tasks per release, which tasks need a migration (a branch database).
+   - a rough size: releases, tasks per release, which tasks need a migration (a branch database), and any paid
+     run, with its estimate (Workflow settings → Paid services).
    Technical only where the choice changes what the user experiences (on-device model or commercial
    service, what a wizard asks, what is stored).
 
@@ -101,9 +102,10 @@ building"): `superpowers:brainstorming` → `spec-<topic>.md`; `superpowers:writ
 mechanical recipe with exact files and an obvious test, `opus-xhigh` for the project's hard areas
 (Workflow settings → Hard areas) or concurrency), is sized for one subagent (one commit, its own test, about
 eight files or fewer, no "and then also"), and is numbered. The plan's header says
-`Needs a branch database: yes/no` (any task adds a migration). A decision that surfaces goes to the owner
-(chat, or a `Q-` item when it needs their accounts or money) and into the spec; nothing is decided only in
-chat. Code reading for a spec is `Explore`'s job. After each spec or plan, check the context rule below.
+`Needs a branch database: yes/no` (any task adds a migration) and `Paid runs: none`, or each run with its
+estimate. A decision that surfaces goes to the owner (chat, or a `Q-` item when it needs their accounts or
+money) and into the spec; nothing is decided only in chat. Code reading for a spec is `Explore`'s job. After
+each spec or plan, check the context rule below.
 
 Then the board's **Queue** gets one row per task folder (not per plan task): the task, its plan, the
 agent of its first plan task, whether it needs a branch database, and its `After:`. Plan tasks run in
