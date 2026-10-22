@@ -29,6 +29,8 @@ the current version of a file from anywhere. Never create a second spec for a ta
   planning ("Planning without building"), and the project's merge command (Workflow settings → Merge). Never
   write code here or commit anything else to master. Other agents' uncommitted work may be in it, so commit
   only your own paths (`git commit -- <paths>`); never `git add -A`, `git add .` or `git commit -a` here.
+  **While a merge batch runs, nothing is committed on master** (owner, 2026-10-22): a claim, a close or a board
+  commit moves master under the merge command and breaks its fast-forward. Wait for the batch to finish.
 - **The task's worktree** (Workflow settings → Worktrees) on branch `task/task-NNN-<slug>`: all
   other work: code, tests, the specs and plans written while building, `status.md` updates.
 - **The folder your session opened in doesn't count.** A desktop-app session stays in the folder it started

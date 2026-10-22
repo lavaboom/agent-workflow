@@ -212,3 +212,4 @@ Biggest obstacle: <one line>
 | "Context is 72 % but this is the last task" | Hand off at 60; the next tab finishes it. |
 | "A Fable subagent would build (or review) this better" | Fable is this tab only. Builders are Opus or Sonnet, reviewers are Opus, with `model` passed. |
 | "I'll fix the spec on master, the builder has the branch" | One copy: the branch's, through the builder. |
+| "The batch is only testing, a quick claim commit won't hurt" | Nothing is committed on master while a merge batch runs (owner, 2026-10-22); wait for it. |
