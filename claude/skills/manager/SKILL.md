@@ -172,9 +172,10 @@ When every Running row with a live agent has reported and been recorded, hand of
 2. If Remote Control is on, turn it off: `set_remote_control` for `self`, `enabled: false`. A session
    serving a Remote Control client cannot be cleared, and the clear drops the link anyway; the next
    tab turns it back on (step 4 of "Every turn").
-3. Tell the owner's phone: `node C:/Users/lavab/.claude/hooks/pushover.mjs "Manager cleared at NN %:
-   <the next step in ten words>. Send /manager to continue."` (the user-level SessionEnd hook sends a
-   second, generic line when the clear happens; this one carries the content).
+3. Tell the owner's phone, when the hook exists (owner, 2026-10-22: the same command on every machine):
+   `node $HOME/.claude/hooks/pushover.mjs "Manager cleared at NN %: <the next step in ten words>. Send
+   /manager to continue."` (the user-level SessionEnd hook sends a second, generic line when the clear
+   happens; this one carries the content). On a machine without `$HOME/.claude/hooks/pushover.mjs`, skip it.
 4. Tell the owner in chat "this tab clears itself after this turn; send `/manager` to continue", and
    call `clear_session` for `self`. The clear happens when the turn ends.
 
