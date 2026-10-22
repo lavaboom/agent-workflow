@@ -38,6 +38,9 @@ built at xhigh or the branch is in one of the project's hard areas (a migration 
    limit, a closed tab) becomes a resume: run, in that worktree, `git status --short` and
    `git log --oneline master..HEAD`, read `status.md` from the branch, and set the row's note to
    `resume: <plan task>, <committed / uncommitted state>`. Nothing on disk is lost; only the agent is.
+   Then remove every task worktree whose task is `DONE` on master, without asking (owner, 2026-10-22): it is
+   the close's own cleanup ("Running the queue" step 8), run again for one a close left behind (`git worktree
+   list`, then `git worktree remove`, `git branch -d` and the branch database cleanup for each).
 4. When the board says `Remote control: on` and `get_session` for `self` reports it off (every clear
    turns it off), call `set_remote_control` for `self` with `enabled: true`; the app asks the owner to
    approve. The owner's phone sees the tab again only after this.

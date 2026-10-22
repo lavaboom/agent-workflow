@@ -351,7 +351,9 @@ The reviewer claims the task (`REVIEW`, `Owner` = the reviewer) and works in the
    ```
 
    The cleanup deletes the task's throwaway database stack once its worktree is gone. If Windows refuses to
-   delete the folder because a session still has it open, say so; the owner closes that session.
+   delete the folder because a session still has it open, say so; the owner closes that session. A worktree
+   whose task is `DONE` on master and that a close left behind is removed the same way at the start of the
+   manager's next turn, without asking (owner, 2026-10-22).
 
 Push master and task branches only as the project's "Who pushes" setting says (Workflow settings; owner, 2026-10-22):
 it names who pushes, what and when, because that depends on what a push deploys and on how many machines work on
