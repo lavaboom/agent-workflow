@@ -201,8 +201,8 @@ reviewed by one reviewer (owner, 2026-10-07): a worker and a reviewer session pe
    `status.md` (no spec or plan needed) groups the related ones: the same files, the same function or
    migration, or the same feature, small enough together for one session (two to five tasks). Tasks that
    need a spec or plan, are blocked, or wait (`After:`) on unfinished work stay out until they are ready. Two
-   tasks that replace the same database object (a table, a SQL function) belong in one group (one migration
-   replaces it once) or must be built one after the other, never side by side.
+   tasks that change the same database object (a table, a SQL function) belong in one group (one migration
+   changes it once) or must be built one after the other, never side by side.
 2. **Writing it down.** One task is the lead. Each member's `status.md` gets a line under `With:`:
    `Group: <letter or name> (the lead | lead task-NNN; with task-…): <the agent>, <why together>`, and the
    roadmap lines say `Group <x>`. The reply to the owner lists each group: lead, members, agent (the
