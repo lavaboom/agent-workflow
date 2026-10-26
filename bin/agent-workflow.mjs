@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// agent-workflow CLI: adopt, sync, check, ledger. See docs/design/cli-spec.md and src/README.md.
+// agent-workflow CLI: init, adopt, sync, check, ledger, vendor. See docs/design/cli-spec.md and src/README.md.
 import os from 'node:os';
 import { main } from '../src/cli.mjs';
 

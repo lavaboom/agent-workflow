@@ -22,7 +22,8 @@ export function decideAdoptItem(entry, bytes, existing, flags) {
   return { ...item, action: 'conflict', sha256: null, note: 'project file differs from the template' };
 }
 
-export async function planAdopt({ projectDir, templateDir, pack, values, flags }) {
+// readExisting(posixPath) gives the project's bytes or null; init passes one that sees the files it removes as gone.
+export async function planAdopt({ projectDir, templateDir, pack, values, flags, readExisting = projectReader(projectDir) }) {
   const items = [];
   const errors = [];
   for (const entry of pack.files) {
@@ -32,10 +33,13 @@ export async function planAdopt({ projectDir, templateDir, pack, values, flags }
       continue;
     }
     const bytes = renderForProject(entry, source, values);
-    const existing = await readBytesIfExists(nativePath(projectDir, entry.path));
-    items.push(decideAdoptItem(entry, bytes, existing, flags));
+    items.push(decideAdoptItem(entry, bytes, await readExisting(entry.path), flags));
   }
   return { items, errors };
+}
+
+export function projectReader(projectDir) {
+  return (posixPath) => readBytesIfExists(nativePath(projectDir, posixPath));
 }
 
 export function adoptManifest(items, { version, projectName, timestamp }) {

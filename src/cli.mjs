@@ -6,6 +6,7 @@ import { runAdopt } from './adopt.mjs';
 import { HELP_TEXT, parseCommandLine } from './args.mjs';
 import { runCheck } from './check.mjs';
 import { isDirectory } from './files.mjs';
+import { runInit } from './init.mjs';
 import { runLedger } from './ledger.mjs';
 import { renderResult } from './report.mjs';
 import { runSync } from './sync.mjs';
@@ -22,7 +23,7 @@ export function harnessCliCommand(binPath) {
   return /\s/.test(forward) ? `node "${forward}"` : `node ${forward}`;
 }
 
-const RUNNERS = { adopt: runAdopt, sync: runSync, check: runCheck, ledger: runLedger, vendor: runVendor };
+const RUNNERS = { init: runInit, adopt: runAdopt, sync: runSync, check: runCheck, ledger: runLedger, vendor: runVendor };
 
 // io: { stdout, stderr (writable-like with write()), cwd, env, homeDir, now: () => Date }
 export async function main(argv, io) {

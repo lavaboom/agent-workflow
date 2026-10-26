@@ -9,6 +9,7 @@ export function renderResult(result, { json }) {
 }
 
 function textLines(result) {
+  if (result.command === 'init') return initLines(result);
   if (result.command === 'adopt') return adoptLines(result);
   if (result.command === 'sync') return syncLines(result);
   if (result.command === 'check') return checkLines(result);
@@ -26,10 +27,26 @@ function adoptLines(result) {
   return lines;
 }
 
+// init: the adopt or sync lines, then (adopt) the next steps, then the git command when there is one.
+function initLines(result) {
+  if (result.mode === 'sync') return [...syncLines(result), ...gitCommandLines(result)];
+  const lines = [...dryRunLine(result), ...result.items.flatMap(itemLines)];
+  if (!result.ok) return lines;
+  lines.push(itemLine({ action: 'write', path: result.manifest, note: `template ${result.version}` }));
+  lines.push('');
+  lines.push(result.nextSteps === null ? '(the template has no NEXT-STEPS.txt)' : result.nextSteps);
+  return [...lines, ...gitCommandLines(result)];
+}
+
+function gitCommandLines(result) {
+  if (result.gitCommand === null) return [];
+  return ['', `Then stage and commit (init never commits)${result.dryRun ? ', after a run without --dry-run' : ''}:`, `  ${result.gitCommand}`];
+}
+
 function syncLines(result) {
   const lines = [...dryRunLine(result)];
   if (result.version !== null) lines.push(`template ${result.fromVersion ?? '?'} → ${result.version}`);
-  lines.push(...result.items.map(itemLine));
+  lines.push(...result.items.flatMap(itemLines));
   if (result.manifestPlanned) lines.push(itemLine({ action: 'write', path: result.manifest, note: null }));
   return lines;
 }
@@ -48,6 +65,12 @@ function checkLines(result) {
 
 function dryRunLine(result) {
   return result.dryRun ? ['dry run: nothing written'] : [];
+}
+
+// An item's line, then its details (filled settings, added lines) indented under it.
+function itemLines(item) {
+  const details = Array.isArray(item.details) ? item.details.map((detail) => `${' '.repeat(ACTION_WIDTH + 2)}${detail}`) : [];
+  return [itemLine(item), ...details];
 }
 
 function itemLine(item) {

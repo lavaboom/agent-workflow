@@ -1,4 +1,4 @@
-# agent-workflow v2: append these lines to the project's .gitignore (adopt prints this reminder).
+# agent-workflow harness: files that stay on this machine
 .claude/settings.local.json
 .claude/worktrees/
 .claude/agent-memory-local/

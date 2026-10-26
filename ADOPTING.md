@@ -2,7 +2,7 @@
 
 For a new project, an existing project with no harness, a project on v1, and keeping any of them current.
 Claude Code ≥ 2.1.277 (it reads `AGENTS.md` natively) and Codex CLI ≥ 0.146 are assumed; Node ≥ 18 for the
-CLI. The template repository lives at `C:codeagent-workflow` on the owner's machine (set
+CLI. The template repository lives at `C:degent-workflow` on the owner's machine (set
 `AGENT_WORKFLOW_HOME` elsewhere).
 
 ## 0. One script for every case: `fresh-init`
@@ -11,8 +11,8 @@ CLI. The template repository lives at `C:codeagent-workflow` on the owner's mach
 into the project folder and double-click it:
 
 ```bat
-C:codeagent-workflowscriptsresh-init.cmd            :: first run: adopt; later runs: sync
-C:codeagent-workflowscriptsresh-init.cmd --dry-run  :: show the plan, change nothing
+C:degent-workflowscriptsresh-init.cmd            :: first run: adopt; later runs: sync
+C:degent-workflowscriptsresh-init.cmd --dry-run  :: show the plan, change nothing
 ```
 
 It runs `agent-workflow init`, which is idempotent:
@@ -26,17 +26,17 @@ It runs `agent-workflow init`, which is idempotent:
   steps and the git command. Nothing is committed by the script.
 - **Later runs**: `sync` (managed files updated to the template's current version, local edits reported as
   conflicts) plus the `.gitignore` check. So updating a project to new global rules is: pull the template
-  repository (`git -C C:codeagent-workflow pull` on a machine that is not where the rules are edited),
+  repository (`git -C C:degent-workflow pull` on a machine that is not where the rules are edited),
   then run `fresh-init` in the project, then commit. No deleting is needed.
 
-A new project needs no more than "follow the procedures in `C:codeagent-workflow`": the first step of
+A new project needs no more than "follow the procedures in `C:degent-workflow`": the first step of
 those procedures is this script, and `template/NEXT-STEPS.txt` is what it prints afterwards.
 
 ## 1. New project, or an existing project with no harness
 
 Initialisation is its own session: nothing else happens in it until step 10 passes.
 
-1. From the project root, on its main branch, with a clean tree: `C:codeagent-workflowscriptsresh-init.cmd`
+1. From the project root, on its main branch, with a clean tree: `C:degent-workflowscriptsresh-init.cmd`
    (§0). It writes the pack (`template/template.json` lists the files), `docs/harness/manifest.json`, and
    prints the next steps.
 2. `AGENTS.md`: fill every `<placeholder>`: what the project is, the install, readiness and dev-server
@@ -71,9 +71,9 @@ skill precedence over a project skill of the same name: while the v1 `~/.claude/
 exists, `/manager` in a migrated project would still run the v1 manager. So, once, on the machine:
 
 ```bat
-cmd /c rmdir "%USERPROFILE%.claudeskillsmanager"
-cmd /c rmdir "%USERPROFILE%.claudeagents"
-cmd /c rmdir "%USERPROFILE%.agent-workflow"
+cmd /c rmdir "%USERPROFILE%\.claude\skills\manager"
+cmd /c rmdir "%USERPROFILE%.claudegents"
+cmd /c rmdir "%USERPROFILE%\.agent-workflow"
 ```
 
 Then, per project, in its main checkout on master with the manager tab idle (its board committed):

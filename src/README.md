@@ -9,6 +9,14 @@ Plain Node ES modules, no dependencies; tests in `tests/` (`node --test`).
 | `args.mjs` | Command-line parsing per command, usage errors, the help text |
 | `report.mjs` | Render a command result as text lines or as one JSON object |
 | `result.mjs` | The shared result object (`commandResult`, `refuse`, `succeed`) and the actions that write a file |
+| `init.mjs` | `init`: not adopted → the migration in `init-adopt.mjs`; adopted → `sync` plus the `.gitignore` merge; next steps, git command |
+| `init-adopt.mjs` | `init` on an unadopted project: plan and apply v1 cleanup, the entry move, adopt (owned kept, managed replaced with a backup), settings, board, `.gitignore` |
+| `init-v1.mjs` | The v1 files `init` removes, the exact conditions, and their removal (a link is removed as a link) |
+| `init-entry.mjs` | `AGENTS.md` → `docs/project-guide.md`: the header block, the v1 pointer paragraph dropped |
+| `init-settings.mjs` | The v1 Workflow settings table: name normalisation, parsing, filling the v2 `AGENTS.md` |
+| `init-board.mjs` | The board's `Next step:` / `Current issues:` lines, inserted when missing |
+| `init-gitignore.mjs` | `.gitignore.harness` merged into `.gitignore` |
+| `markdown-table.mjs` | Markdown tables in prose: find one under a heading (not in fences or comments), split and build rows |
 | `adopt.mjs` | `adopt`: plan create/skip/conflict/kept/overwritten, write files and the manifest |
 | `sync.mjs` | `sync`: plan and apply managed updates, owned creates, retired and pruned files |
 | `sync-decide.mjs` | Pure decisions for `sync` (managed file, conflict resolution, retired file) |
@@ -30,9 +38,12 @@ Plain Node ES modules, no dependencies; tests in `tests/` (`node --test`).
 | `gitroot.mjs` | Project name: basename of the git root (worktrees resolve to the main checkout) |
 | `hash.mjs` | sha256 over bytes with CRLF normalised to LF |
 | `files.mjs` | File access: native paths from forward-slash paths, read-if-exists, write with parents, listing |
-| `text.mjs` | BOM- and CRLF-tolerant line splitting and counting |
+| `text.mjs` | BOM- and CRLF-tolerant line splitting and counting; a text's line ending; strict UTF-8 decoding |
 | `dates.mjs` | UTC dates and timestamps, ISO date validation |
 | `versions.mjs` | Compare dotted version strings |
 
 The Stop hook `template/.claude/hooks/usage-log.mjs` is a separate, self-contained script (it ships into
 projects and cannot import from here); its git-root logic mirrors `gitroot.mjs`.
+
+`scripts/fresh-init.cmd` is the Windows launcher for `init` (cli-spec §9): it runs `init --project "%CD%"`
+with any extra arguments, from `%AGENT_WORKFLOW_HOME%` or `C:codeagent-workflow`.

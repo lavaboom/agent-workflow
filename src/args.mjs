@@ -12,6 +12,7 @@ const COMMON_OPTIONS = {
 };
 
 const COMMAND_OPTIONS = {
+  init: { name: { type: 'string' } },
   adopt: { name: { type: 'string' }, 'force-owned': { type: 'boolean' }, 'force-managed': { type: 'boolean' } },
   sync: { 'take-template': { type: 'boolean' }, 'keep-local': { type: 'boolean' }, prune: { type: 'boolean' } },
   check: { 'template-only': { type: 'boolean' } },
@@ -30,6 +31,7 @@ Usage: node bin/agent-workflow.mjs <command> [options]
        node bin/agent-workflow.mjs vendor --from <checkout> <item>...
 
 Commands:
+  init     migrate a project to the pack, or bring an adopted one up to date (idempotent; never commits)
   adopt    install the pack into a project (refuses when already adopted)
   sync     update managed files to the current template
   check    lean and freshness checks on a project, or on the template
@@ -43,6 +45,16 @@ Options for every command:
   --dry-run          plan without writing
   -h, --help         print this help
 
+init:    --name <project name>
+         Not adopted (no docs/harness/manifest.json): deletes the v1 files (CLAUDE.md when every line is an
+         @import; docs/AGENT_PROTOCOL.md and docs/tasks/README.md when they mention agent-workflow;
+         .claude/agents/ and .claude/skills/manager/), moves AGENTS.md to docs/project-guide.md (minus the
+         v1 pointer paragraph), adopts the pack (an existing owned file is kept; a differing managed file is
+         replaced, its old copy saved in docs/harness/init-backup/), fills the new AGENTS.md's Workflow
+         settings from the old table, adds the board's "Next step:"/"Current issues:" lines, and merges
+         .gitignore.harness into .gitignore. Adopted: runs sync, then the .gitignore merge.
+         Prints every deletion, move, replacement and filled setting, then the git command to commit.
+         Windows launcher: scripts/fresh-init.cmd (runs init on the current folder).
 adopt:   --name <project name>  --force-owned  --force-managed
 sync:    --take-template  --keep-local  --prune
 check:   --template-only
@@ -80,7 +92,7 @@ function validateOptions(command, values) {
     return `--since must be an ISO date (YYYY-MM-DD), got "${values.since}"`;
   }
   if (command === 'ledger' && values.since !== undefined && values.all) return '--since and --all cannot be used together';
-  if (command === 'adopt' && values.name !== undefined && values.name.trim() === '') return '--name must not be empty';
+  if ((command === 'adopt' || command === 'init') && values.name !== undefined && values.name.trim() === '') return '--name must not be empty';
   if (command === 'vendor' && (values.from === undefined || values.from.trim() === '')) return 'vendor needs --from <checkout>';
   for (const key of ['project', 'template']) {
     if (values[key] !== undefined && values[key].trim() === '') return `--${key} must not be empty`;
