@@ -72,7 +72,7 @@ exists, `/manager` in a migrated project would still run the v1 manager. So, onc
 
 ```bat
 cmd /c rmdir "%USERPROFILE%\.claude\skills\manager"
-cmd /c rmdir "%USERPROFILE%.claudegents"
+cmd /c rmdir "%USERPROFILE%\.claude\agents"
 cmd /c rmdir "%USERPROFILE%\.agent-workflow"
 ```
 
