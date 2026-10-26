@@ -1,0 +1,5 @@
+# Line endings: every text file is stored and checked out with LF, on every platform.
+# The pack must be byte-identical in every project; the CLI hashes with CRLF normalised anyway.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
