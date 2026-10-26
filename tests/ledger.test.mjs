@@ -4,7 +4,7 @@ import path from 'node:path';
 import { after, describe, it } from 'node:test';
 import { parseLedger } from '../src/table.mjs';
 import { formatTokens } from '../src/usage.mjs';
-import { FIXTURES_DIR, makeProject, makeTempDir, nativeIn, removeTempDirs, runCli, writeText } from './helpers/setup.mjs';
+import { FIXTURES_DIR, makeProject, makeTempDir, nativeIn, removeTempDirs, runCli, toCrlf, writeText } from './helpers/setup.mjs';
 
 const FIXTURE_LEDGER = path.join(FIXTURES_DIR, 'ledger', 'ledger.md');
 
@@ -35,7 +35,7 @@ describe('ledger', () => {
   });
 
   it('defaults to the last 7 days and tolerates CRLF', async () => {
-    const project = await projectWithLedger((text) => text.replace(/\n/g, '\r\n'));
+    const project = await projectWithLedger(toCrlf);
     const run = await runCli(['ledger', '--project', project]);
     assert.equal(run.code, 0, run.stderr);
     assert.deepEqual(run.stdout.trimEnd().split('\n'), WINDOW_LINES);

@@ -5,7 +5,7 @@ import { after, describe, it } from 'node:test';
 import { harnessCliCommand } from '../src/cli.mjs';
 import { contentHash } from '../src/hash.mjs';
 import {
-  BIN, FIXTURE_TEMPLATE, copyFixtureTemplate, makeProject, pathExists, nativeIn, readJson, readText, removeTempDirs, runCli, writeText,
+  BIN, FIXTURE_TEMPLATE, copyFixtureTemplate, makeProject, pathExists, nativeIn, readJson, readText, removeTempDirs, runCli, toCrlf, toLf, writeText,
 } from './helpers/setup.mjs';
 
 const PACK = (await readJson(nativeIn(FIXTURE_TEMPLATE, 'template.json'))).files;
@@ -101,13 +101,15 @@ describe('adopt', () => {
     assert.equal(await readText(project, '.claude', 'rules', 'core.md'), await readText(FIXTURE_TEMPLATE, '.claude', 'rules', 'core.md'));
   });
 
-  it('skips a file that is already identical, including one with CRLF line endings', async () => {
-    const project = await makeProject();
+  it('skips a file that is already identical, with CRLF or with LF line endings', async () => {
     const core = await readText(FIXTURE_TEMPLATE, '.claude', 'rules', 'core.md');
-    await writeText(nativeIn(project, '.claude/rules/core.md'), core.replace(/\n/g, '\r\n'));
-    const run = await runCli(['adopt', '--project', project, '--template', FIXTURE_TEMPLATE]);
-    assert.equal(run.code, 0, run.stderr);
-    assert.match(run.stdout, /^skip {8}.claude\/rules\/core\.md$/m);
+    for (const convert of [toCrlf, toLf]) {
+      const project = await makeProject();
+      await writeText(nativeIn(project, '.claude/rules/core.md'), convert(core));
+      const run = await runCli(['adopt', '--project', project, '--template', FIXTURE_TEMPLATE]);
+      assert.equal(run.code, 0, run.stderr);
+      assert.match(run.stdout, /^skip {8}.claude\/rules\/core\.md$/m);
+    }
   });
 
   it('--dry-run plans without writing', async () => {

@@ -1,6 +1,6 @@
 // Shared test helpers: temp folders, the fixture template, and running the CLI in-process or as a process.
 import { spawn } from 'node:child_process';
-import { cp, mkdir, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
+import { cp, mkdir, mkdtemp, readdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -30,6 +30,39 @@ export async function copyFixtureTemplate() {
   const dir = path.join(await makeTempDir('aw-tpl-'), 'template');
   await cp(FIXTURE_TEMPLATE, dir, { recursive: true });
   return dir;
+}
+
+// Line-ending conversions that give the same result whatever the input uses, so a test behaves the
+// same in an LF checkout and in a CRLF one (core.autocrlf=true).
+export function toLf(text) {
+  return text.replace(/\r\n/g, '\n');
+}
+
+export function toCrlf(text) {
+  return toLf(text).replace(/\n/g, '\r\n');
+}
+
+// Rewrites every file under dir with the given line endings ('lf' or 'crlf').
+export async function convertLineEndings(dir, eol) {
+  const convert = eol === 'crlf' ? toCrlf : toLf;
+  for (const file of await listFiles(dir)) await writeFile(file, convert(await readFile(file, 'utf8')), 'utf8');
+}
+
+// A copy of the fixture template with every file converted to the given line endings.
+export async function copyFixtureTemplateWith(eol) {
+  const dir = await copyFixtureTemplate();
+  await convertLineEndings(dir, eol);
+  return dir;
+}
+
+async function listFiles(dir) {
+  const files = [];
+  for (const entry of await readdir(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) files.push(...await listFiles(full));
+    else if (entry.isFile()) files.push(full);
+  }
+  return files;
 }
 
 // An empty project folder with its own .git so its name never depends on the temp folder's parents.

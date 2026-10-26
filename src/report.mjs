@@ -22,7 +22,7 @@ function adoptLines(result) {
   if (!result.ok) return lines;
   lines.push(itemLine({ action: 'write', path: result.manifest, note: `template ${result.version}` }));
   lines.push('');
-  lines.push(result.nextSteps === null ? '(the template has no NEXT-STEPS.txt)' : result.nextSteps.replace(/\r?\n$/, ''));
+  lines.push(result.nextSteps === null ? '(the template has no NEXT-STEPS.txt)' : result.nextSteps);
   return lines;
 }
 

@@ -6,6 +6,7 @@ import { MANIFEST_PATH, manifestEntry, newManifest, readManifest, writeManifest 
 import { loadPack, packSourcePath, readNextSteps, readPackBytes, renderForProject } from './pack.mjs';
 import { utcDateString, utcTimestamp } from './dates.mjs';
 import { WRITTEN_ACTIONS, commandResult, refuse, succeed } from './result.mjs';
+import { splitLines } from './text.mjs';
 
 // Pure decision for one pack file. existing is the project's current bytes or null.
 export function decideAdoptItem(entry, bytes, existing, flags) {
@@ -64,8 +65,14 @@ export async function runAdopt(options) {
     const manifest = adoptManifest(plan.items, { version: pack.version, projectName: values.name, timestamp: utcTimestamp(options.now) });
     await writeAdoption(options.projectDir, plan.items, manifest);
   }
-  result.nextSteps = await readNextSteps(options.templateDir);
+  result.nextSteps = printableText(await readNextSteps(options.templateDir));
   return succeed(result);
+}
+
+// NEXT-STEPS.txt as printed: \n line endings only (a CRLF checkout must not put CR on the console),
+// no BOM and no final newline.
+export function printableText(text) {
+  return text === null ? null : splitLines(text).join('\n');
 }
 
 async function writeAdoption(projectDir, items, manifest) {

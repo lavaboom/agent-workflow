@@ -4,7 +4,7 @@ import { after, describe, it } from 'node:test';
 import { listFilesRecursive } from '../src/files.mjs';
 import { readHeader } from '../src/headers.mjs';
 import {
-  FIXTURE_TEMPLATE, copyFixtureTemplate, makeProject, nativeIn, readJson, removeTempDirs, runCli, writeText,
+  FIXTURE_TEMPLATE, copyFixtureTemplate, makeProject, nativeIn, readJson, removeTempDirs, runCli, toCrlf, toLf, writeText,
 } from './helpers/setup.mjs';
 
 after(removeTempDirs);
@@ -42,16 +42,18 @@ describe('check (project)', () => {
     assert.match(run.stdout, /^project checks: 9 ok, 0 warn, 0 fail$/m);
   });
 
-  it('passes with CRLF line endings everywhere', async () => {
-    const project = await adoptedProject();
-    for (const file of await listFilesRecursive(project)) {
-      if (!file.endsWith('.md')) continue;
-      const target = nativeIn(project, file);
-      await writeText(target, (await readFile(target, 'utf8')).replace(/\n/g, '\r\n'));
+  it('passes with CRLF, and with LF, line endings everywhere', async () => {
+    for (const convert of [toCrlf, toLf]) {
+      const project = await adoptedProject();
+      for (const file of await listFilesRecursive(project)) {
+        if (!file.endsWith('.md')) continue;
+        const target = nativeIn(project, file);
+        await writeText(target, convert(await readFile(target, 'utf8')));
+      }
+      const run = await check(project);
+      assert.equal(run.code, 0, run.stdout);
+      assert.doesNotMatch(run.stdout, /^(warn|fail) /m);
     }
-    const run = await check(project);
-    assert.equal(run.code, 0, run.stdout);
-    assert.doesNotMatch(run.stdout, /^(warn|fail) /m);
   });
 
   it('warns on an AGENTS.md over 100 lines and fails over 150', async () => {
