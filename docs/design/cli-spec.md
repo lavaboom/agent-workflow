@@ -217,3 +217,29 @@ package.json                  { "name": "@lavaboom/agent-workflow", "type": "mod
 
 Code philosophy applies (`template/docs/harness/building.md` → testable, documentable, readable): small
 modules with explicit inputs and outputs; file and function names as documentation; no clever abstractions.
+
+## 7. Addendum (2026-10-26, after measuring ECC's installer): `vendor`
+
+ECC's installer cannot copy one piece (`--skills <one>` expands to its whole module, about sixty files),
+so the CLI vendors single files from a pinned checkout of any repository.
+
+### `vendor --from <checkout> <item>...`
+
+- `<checkout>`: a local directory (an ECC clone at a tag, or any repository). `<item>` is a path relative to
+  it: `skills/<name>` (a directory) or `agents/<name>.md` (a file); other paths are accepted and copied to
+  the same relative path under `.claude/` only when they start with `skills/`, `agents/`, `rules/` or
+  `hooks/`; anything else is refused (exit 2) with the reason.
+- Destination: `skills/<name>` → `.claude/skills/<name>/` (the whole directory, recursively);
+  `agents/<name>.md` → `.claude/agents/<name>.md`; `rules/<lang>/<file>.md` → `.claude/rules/<lang>-<file>.md`;
+  `hooks/<file>` → `.claude/hooks/<file>`.
+- Refuse (exit 1) when a destination exists and differs, unless `--force`; identical → `skip`.
+- Provenance: the manifest gains a `vendored` object keyed by destination path (forward slashes):
+  `{ "from": "<the checkout's absolute path>", "source": "<item>", "version": "<git describe --tags of the checkout, read from .git without shelling out: the content of .git/HEAD, and packed-refs or refs/tags lookup; 'unknown' when not resolvable>", "vendoredAt": "<ISO>", "sha256": { "<relative file>": "…" } }`.
+  Reading the tag without shelling out may be hard; acceptable fallback: `version` = the checkout's `VERSION`
+  file content when present (ECC has one), else `package.json` `version`, else `unknown`.
+- `check` gains `vendored-drift`: a vendored file whose hash differs from the manifest → `warn` (local edit;
+  expected after trimming an ECC agent; the message says so).
+- `--dry-run` and `--json` as for the other commands.
+- Tests: vendor a fixture checkout's `skills/x` and `agents/y.md` into a temp project; refusal on an
+  unsupported path; refusal on a differing destination and `--force`; provenance written with hashes and
+  the fixture's `VERSION`; `check` reports drift after editing a vendored file.

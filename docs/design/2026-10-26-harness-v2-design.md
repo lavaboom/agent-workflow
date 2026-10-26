@@ -196,9 +196,12 @@ mandatory and are what a fresh session reads first.
 ### D9. ECC as a library, selected per project (manager, 2026-10-26)
 
 Nothing from ECC is installed at user level, because every enabled plugin puts all its skill and agent
-descriptions into every session. A project that wants ECC pieces keeps an `ecc-install.json` (target
-`claude-project`) and runs `npx ecc-universal@2.2.3 install --config ecc-install.json`; rules land under
-`.claude/rules/ecc/`, skills under `.claude/skills/`, agents under `.claude/agents/`. The template ships a
+descriptions into every session. ECC's own installer was measured during this design: `--skills
+security-review` for the `claude-project` target writes 58 files (the skill's whole module), so it cannot
+serve single picks. A project therefore **vendors single files** from a pinned ECC checkout with
+`agent-workflow vendor` (provenance and hashes recorded in `docs/harness/manifest.json`), and keeps an
+`ecc-install.json` only for a module wanted whole (the hooks runtime for cost tracking), applied with
+`npx ecc-universal@2.2.3 install --config ecc-install.json`. The template ships a
 selection guide (`docs/harness/tooling.md`) with the picks worth considering by need: `security-review` and
 `security-reviewer` for auth and payments, `e2e-testing` and `e2e-runner` for a web UI, `database-reviewer`
 for Postgres, the language reviewers by stack, `build-error-resolver` for red builds, `cost-tracking` when

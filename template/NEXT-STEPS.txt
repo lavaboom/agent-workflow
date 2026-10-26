@@ -1,0 +1,17 @@
+Adopted. Finish the initialisation in this session, before any feature work:
+
+  1. AGENTS.md: fill every <placeholder> (what the project is, the commands, the tier table, the Workflow
+     settings, the project-specific hard constraints). Keep it under 100 lines.
+  2. .claude/rules/hard-areas.md: fill the paths and rules, or delete the file. .claude/rules/phase-*.md:
+     keep the one that matches the Phase setting, delete the rest.
+  3. docs/local-services.md: the shared services agents must never restart, how to make a test user, the
+     dev server command and port per worktree.
+  4. docs/manager/board.md: write the first "Next step:" and "Current issues:" lines.
+  5. .gitignore: append the lines from .gitignore.harness, then delete that file.
+  6. ECC (optional): pick pieces with docs/harness/tooling.md, edit ecc-install.json, run the dry-run.
+  7. Run the readiness command from AGENTS.md; fix it before anything else.
+  8. node <agent-workflow>/bin/agent-workflow.mjs check   -> every line ok or warn, none fail.
+  9. Commit the harness files on master: git add AGENTS.md .claude .agents .codex docs ecc-install.json
+     && git commit -m "docs(harness): adopt agent-workflow v2"
+ 10. Fresh-session test: open a new session with no instructions and ask it the five questions from
+     AGENTS.md -> Start here. Fix the file it could not answer from.

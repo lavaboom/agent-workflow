@@ -1,0 +1,25 @@
+#:schema https://developers.openai.com/codex/config-schema.json
+# agent-workflow v2: project-local Codex roles. Managed file; edit upstream (docs/harness/maintenance.md).
+# Model and provider are inherited from the user's config. Each spawn passes the effort the ladder says
+# (docs/harness/model-policy.md). MCP servers are added per project below, sparingly (docs/harness/tooling.md).
+
+persistent_instructions = "Follow AGENTS.md. Read docs/harness/codex.md once per session."
+
+[features]
+multi_agent = true
+
+[agents]
+max_threads = 3
+max_depth = 1
+
+[agents.builder]
+description = "Builds one plan task or small task in its worktree, runs the tier's checks, commits with status.md updated, reports evidence. Never merges or pushes."
+config_file = "agents/builder.toml"
+
+[agents.reviewer]
+description = "Re-runs a task's acceptance checks and reviews its diff against the spec; returns APPROVE or FIX with findings as severity, file:line, what, why, fix. Read-only."
+config_file = "agents/reviewer.toml"
+
+[agents.explorer]
+description = "Read-only codebase investigation: traces the real path, cites file:line, returns a short conclusion."
+config_file = "agents/explorer.toml"
