@@ -43,6 +43,7 @@ checkout (`docs(manager): board`). Its first lines are what a fresh session read
 Next step: <the one thing the next turn does>
 Current issues: <what is broken or blocked right now, one line each, or "none">
 Autopilot: on | off
+Remote control: on | off
 ```
 
 Then **Running** (one row per live or resumable dispatch), **Queue** (one row per task folder, in order),

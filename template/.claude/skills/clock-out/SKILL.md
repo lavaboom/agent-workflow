@@ -28,8 +28,10 @@ Work through every item; say which you could not do and why. The procedure is `d
 4. **For the roadmap.** Follow-ups and open questions under `For the roadmap:` in `status.md`; on master,
    write small tasks and `Q-` items down now.
 5. **Commit** your paths only: `git commit -m "<type>(task-NNN): <what> + status" -- <paths>`.
-6. **Manager tab only:** the board's `Next step:` and `Current issues:` lines, the Running rows reconciled,
-   the ledger rows for today's reports, `docs(manager): board` committed; push as "Who pushes" says.
+6. **If you commit on master** (a claim, a close, a `Q-` item): refresh the board's `Next step:` and
+   `Current issues:` in the same commit. **If you built or reviewed outside the manager tab:** append your
+   ledger row. **Manager tab:** also the Running rows reconciled, the ledger rows for today's reports,
+   `docs(manager): board` committed; push as "Who pushes" says.
 7. Say, in one line, what the next session should do first.
 
 ## Tool notes

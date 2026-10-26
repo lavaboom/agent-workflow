@@ -30,7 +30,9 @@ above, and never below the builder's effort. A hard-area or concurrency review i
 **Explorer:** Haiku at low for a lookup; Sonnet at medium for an explanation or a spec question.
 
 **Effort is passed on every dispatch** with the model (Claude: the Agent tool's `model` and `effort`;
-Codex: the role's `model_reasoning_effort`, overridden per spawn). The role files set neither.
+Codex: the role's `model_reasoning_effort`, overridden per spawn). The Claude role files set neither; the
+Codex role files set defaults (builder Luna medium, reviewer Sol medium, explorer Luna low) that every
+spawn overrides with the row the ladder gives.
 
 ## The ladder (Codex)
 
@@ -62,10 +64,11 @@ session writes its own rows):
 | date | task | step | role | tool | model | effort | tier | round | outcome | layer | note |
 ```
 
-- `step`: `build`, `review`, `fix` (a builder resumed with findings).
+- `step`: `build`, `review`, `fix` (a builder resumed with findings), `close` (the task closed after its merge).
 - `round`: 1 for the first build and the first review; a `fix` row and its re-review carry the round number.
-- `outcome`: `approve`, `fix` (findings returned), `escalated` (a stronger model took over), `blocked`,
-  `abandoned`, `done` (a close).
+- `outcome`: on a `build` or `fix` row `built` (the builder reported finished work), `blocked` or
+  `abandoned`; on a `review` row `approve`, `fix` (findings returned) or `escalated` (the next build goes
+  to a stronger model); on a `close` row `done`. A `close` row carries the role, model, effort and tier of the review it closes.
 - `layer` (on `fix`, `escalated` and `blocked`; else `none`), the harness layer that failed, from lecture 1 of
   the harness course: `spec` (the plan left a choice or a fact out), `context` (the agent lacked a doc or
   a decision it needed), `environment` (install, services, ports), `verification` (the checks did not catch
@@ -73,7 +76,7 @@ session writes its own rows):
   with everything in place).
 - `note`: a few words; the finding's `what` for a `fix`.
 
-`agent-workflow ledger` (the CLI from the template repository) prints the week: Sonnet share, first-pass
+`<Harness CLI> ledger` (the CLI from the template repository) prints the week: Sonnet share, first-pass
 approval per model, fix rounds per model and tier, escalations, failure layers, overkill candidates (Opus
 builds approved first pass on `docs`, `static` or `unit`), and this machine's token usage per model from
 the usage log. The weekly review (`maintenance.md`) reads it and moves the ladder.
@@ -81,7 +84,7 @@ the usage log. The weekly review (`maintenance.md`) reads it and moves the ladde
 ## Lessons
 
 `docs/harness/lessons.md` is the planner's persistent memory: dated, one paragraph each, written when a
-`FIX` or `escalated` row has layer `spec` or `context`, and at the weekly review. The manager reads it before
+`fix`, `escalated` or `blocked` row has layer `spec` or `context`, and at the weekly review. The manager reads it before
 writing a plan. A lesson says what was missing and what the plan should contain next time ("Sonnet guessed
 the error shape; paste the error type and the one call site"). Lessons that stop recurring are retired at
 a review, with the date.

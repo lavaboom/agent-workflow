@@ -6,9 +6,10 @@ review-by: 2027-01-31
 
 # Core rules
 
-- **Where you work.** Every edit and command runs in the task's worktree by its full path (Workflow settings
-  → Worktrees), never in the folder the session opened in (`docs/harness/places.md`). Never in an app-made
-  `.claude/worktrees/` folder.
+- **Where you work.** Code, tests and a task's branch files are edited only in the task's worktree by its
+  full path (Workflow settings → Worktrees), never in the folder the session opened in and never in an
+  app-made `.claude/worktrees/` folder. The main checkout takes only docs commits for claims, planning,
+  closes and the board, and the merge command (`docs/harness/places.md`).
 - **What done means.** A task is done when its acceptance checks pass and a separate reviewer says `APPROVE`.
   "Looks right" and "tests I did not run" are not evidence (`docs/harness/verification.md`).
 - **Stay in your lane.** Touch only your task's `Touches:` paths; widen `Touches:` in `status.md` and say so,

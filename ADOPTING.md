@@ -34,17 +34,34 @@ Initialisation is its own session: nothing else happens in it until step 10 pass
 9. `node C:/code/agent-workflow/bin/agent-workflow.mjs check`: no `fail` lines.
 10. Commit on master, harness files only:
     `git add AGENTS.md .claude .agents .codex docs ecc-install.json .gitignore && git commit -m "docs(harness): adopt agent-workflow v2"`.
-11. The fresh-session test: a new session with no verbal context, the five questions from `AGENTS.md` →
-    Start here. Fix the file behind any miss.
+11. The fresh-session test: a new session with no verbal context, the five questions in
+    `docs/harness/session.md` → The fresh-session test. Fix the file behind any miss.
 
 Codex needs nothing more: it reads `AGENTS.md`, `.codex/config.toml` and `.agents/skills/`. Claude Code
 needs nothing more either: `.claude/` is in the project. There is no user-level install.
 
-## 2. A project on v1 (HomeXpense, GroWith)
+## 2. A project on v1 (the two projects still on it)
 
 Yes, a fresh initialisation: v1's files point outside the project and its roles and rules differ from v2's.
 Do it in the project's main checkout on master, with no builder running and the manager tab idle (its
 board committed). One commit at the end.
+
+**Before the first project migrates, remove the two v1 user-level junctions.** Claude Code gives a
+personal skill precedence over a project skill of the same name (verified 2026-10-26 in the skills docs), so
+while `~/.claude/skills/manager` exists, `/manager` in a migrated project would still run the v1 manager and
+bypass the whole v2 flow; the v1 agents in `~/.claude/agents` lose to project definitions but stay visible
+with all tools. The project still on v1 gets project-level copies instead:
+
+```powershell
+cmd /c rmdir "%USERPROFILE%\.claude\skills\manager"
+cmd /c rmdir "%USERPROFILE%\.claude\agents"
+# in the project still on v1 (its main checkout):
+Copy-Item -Recurse C:\code\agent-workflow\v1\claude\agents .claude\agents
+Copy-Item -Recurse C:\code\agent-workflow\v1\claude\skills\manager .claude\skills\manager
+```
+
+Commit those copies there (`docs(harness): v1 agents and manager skill, project-level until v2`); they are
+deleted again by that project's own migration.
 
 Delete first:
 
@@ -73,13 +90,11 @@ Then:
    run it, then answer its conflict list with `--force-owned` to keep the project's own copies. Add the
    three mandatory lines to the top of the board. New task folders use `docs/harness/status-template.md`
    (`Tier:` and `Evidence:` are new); existing ones are updated when next touched.
-4. The manager tab: `/manager` now resolves to the project's `.claude/skills/manager/`; clear the tab
-   once so it loads the v2 skill. The v1 `~/.claude/agents` and `~/.claude/skills/manager` junctions keep
-   serving the other project until it migrates; project-level definitions win over them, so no conflict.
+4. The manager tab: `/manager` now resolves to the project's `.claude/skills/manager/` (the user-level
+   junction is gone, see above); clear the tab once so it loads the v2 skill.
 
-When both projects are on v2: delete `v1/`, the root stubs `WORKFLOW.md`, `AGENT_PROTOCOL.md`, `TASKS.md`
-in this repository, and the junctions (`cmd /c rmdir "%USERPROFILE%\.claude\agents"`,
-`cmd /c rmdir "%USERPROFILE%\.claude\skills\manager"`, `cmd /c rmdir "%USERPROFILE%\.agent-workflow"`).
+When both projects are on v2: delete `v1/` and the root stubs `WORKFLOW.md`, `AGENT_PROTOCOL.md`,
+`TASKS.md` in this repository, and the last junction (`cmd /c rmdir "%USERPROFILE%\.agent-workflow"`).
 
 ## 3. Keeping a project current
 

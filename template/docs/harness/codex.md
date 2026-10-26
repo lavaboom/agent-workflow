@@ -22,14 +22,18 @@ same. What differs is the mechanics below. The `.claude/rules/` files are Claude
 | `explorer` | `.codex/agents/explorer.toml` | `gpt-6-luna`, low | read-only |
 
 The ladder in `model-policy.md` maps Sonnet to Luna and Opus to Sol; pass the effort the row says when
-spawning. The parent session owns integration and final verification; a subagent reports, it does not
+spawning. The role files name the ids `gpt-6-luna` and `gpt-6-sol`; the exact ids an account can use vary
+(`/model` in Codex lists them, and the config reference's own example is `gpt-6.1-sol`), so adoption checks
+them once and, if they differ, fixes the three role files and records it in `review-log.md` (a `sync`
+conflict kept with `--keep-local`). The parent session owns integration and final verification; a subagent reports, it does not
 merge or push.
 
 ## Skills
 
 Codex loads skills from `.agents/skills/`. The three harness skills (`manager`, `harness-review`,
-`clock-out`) are mirrored there by `agent-workflow adopt` and `sync`; their text is tool-neutral except the
-"Tool notes" section at the end of each. ECC skills chosen in `ecc-install.json` can be installed for
+`clock-out`) are mirrored there by `<Harness CLI> adopt` and `sync`; their steps are written for any tool,
+and each ends with a "Tool notes" section that names the Claude Code tool and the Codex substitute for
+every step that needs one. ECC skills chosen in `ecc-install.json` can be installed for
 Codex with target `codex` (user level) or copied into `.agents/skills/` by hand; record the choice in
 `review-log.md`.
 
@@ -41,7 +45,11 @@ Codex with target `codex` (user level) or copied into `.agents/skills/` by hand;
   (`task-flow.md` → Small tasks) or under `For the roadmap:` in `status.md`, and mentioned in the final
   response. It is not added to the roadmap unless the owner says so.
 - A Codex session that builds or reviews writes its own ledger rows (`model-policy.md`) with `tool: codex`.
-- Worktrees: the Worktrees setting, not Codex's own location (`places.md`).
+- Worktrees: the Worktrees setting, not Codex's own location (`places.md`). A Codex builder session is
+  opened in the task's worktree, and `workspace-write` must be allowed to reach the main checkout's `.git`
+  (a linked worktree commits through it) and the worktrees folder: in the user or project config,
+  `[sandbox_workspace_write] writable_roots = ["<Main checkout>/.git", "<the Worktrees folder>"]`, the
+  paths from the Workflow settings.
 
 ## What Codex does not get
 

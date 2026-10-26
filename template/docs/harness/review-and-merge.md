@@ -19,10 +19,13 @@ closes; in a separate tab one agent does all three.
   fixing silently: for a small fix it may apply the fix itself with a test and say so in `status.md`; for
   anything larger it writes `handoff-review.md` on the branch, sets `Status: IN_PROGRESS`, `Owner: none`,
   commits, and tells the owner.
-- **Before the whole-branch review's checks and before any gate**, merge master into the branch; when that
-  changed the dependency lockfile, run the install step of "Prepare a worktree" again (owner, 2026-10-22).
-- The whole-branch review also runs the project's builder checks over the whole diff and, for a UI change, a
-  browser pass of every changed page from the worktree's own dev server.
+- **Before the whole-branch review's checks and before any gate**, master is merged into the branch and,
+  when that changed the dependency lockfile, the install step of "Prepare a worktree" runs again (owner,
+  2026-10-22). Who does it: the builder, on the manager's instruction, in orchestrated mode; the reviewing
+  tab itself in a separate tab. A dispatched reviewer never does: it cannot edit.
+- The whole-branch review re-runs the union of the tier commands of every plan task on the branch plus the
+  integration files the feature touches, and, for a UI change, a browser pass of every changed page from the
+  worktree's own dev server. The gate runs only in the merge command.
 
 ## 2. Merge
 
@@ -45,7 +48,7 @@ One docs commit on master from the main checkout, `docs(tasks): close task-NNN`:
   `completed/`.
 - `git mv docs/tasks/active/task-NNN-<slug> docs/tasks/completed/`, then update every link to the old path
   (`git grep -l "tasks/active/task-NNN-"`), applied migrations excepted.
-- The ledger row for the review (`model-policy.md` → The ledger).
+- The `close` ledger row, outcome `done` (`model-policy.md` → The ledger).
 
 ## 4. Clean up
 

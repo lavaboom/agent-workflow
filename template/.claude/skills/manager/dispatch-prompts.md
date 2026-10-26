@@ -70,14 +70,22 @@ it stopped." A fresh agent: `SendMessage` cannot reach a dead one.
 Who: Opus for `unit`, `integration`, `e2e`; Sonnet allowed for `docs` and `static`; effort medium under
 about 150 changed lines, high above, never below the builder's; xhigh for a hard area or concurrency.
 
+## Merge master before the whole-branch review (a builder step)
+
+Before any whole-branch check (owner, 2026-10-22), resume the task's builder (or dispatch a fresh one with
+the builder recipe, Sonnet at medium) with: "merge master into the branch, resolve conflicts and commit
+there; when the merge changed the dependency lockfile, run the install step of 'Prepare a worktree' again;
+re-run the tier's checks; update `Evidence:`; report." The reviewer cannot do this: it cannot edit, and a
+conflict resolution is an edit.
+
 ## Whole-branch reviewer (before the merge)
 
-First, before any check (owner, 2026-10-22): "merge master into the branch (resolve and commit there); when
-the merge changed the dependency lockfile, run the install step of 'Prepare a worktree' again." Then the
-reviewer recipe over the whole `git diff master...task/task-NNN-<slug>`, plus: the project's builder
-checks over the whole diff, the integration files the feature touches, and for a UI change a browser pass
-of every changed page from the worktree's own dev server (`places.md`: a port of its own, console read).
-Opus; xhigh for a hard area (a migration included) or concurrency. Its findings go through the same fix loop.
+After that builder step, the reviewer recipe over the whole `git diff master...task/task-NNN-<slug>`, with
+the checks to re-run spelled out: the union of the tier commands of every plan task on the branch, the
+integration files the feature touches, and for a UI change a browser pass of every changed page from the
+worktree's own dev server (`places.md`: a port of its own, console read; the reviewer has the session's
+browser tools). The gate itself runs only in the merge command. Opus; xhigh for a hard area (a migration
+included) or concurrency. Its findings go through the same fix loop.
 
 ## Explorer (a question, for the owner or for a spec)
 
@@ -99,7 +107,9 @@ Append to `docs/harness/ledger.md` → Rows, in the main checkout, committed wit
 commit:
 
 ```
-| 2026-10-26 | task-031 | build  | builder  | claude | sonnet | medium | unit | 1 | approve | none | parser + 14 tests |
+| 2026-10-26 | task-031 | build  | builder  | claude | sonnet | medium | unit | 1 | built   | none | parser + 14 tests |
 | 2026-10-26 | task-031 | review | reviewer | claude | opus   | medium | unit | 1 | fix     | spec | error type not named in plan |
-| 2026-10-26 | task-031 | fix    | builder  | claude | sonnet | medium | unit | 2 | approve | none | |
+| 2026-10-26 | task-031 | fix    | builder  | claude | sonnet | medium | unit | 2 | built   | none | |
+| 2026-10-26 | task-031 | review | reviewer | claude | opus   | medium | unit | 2 | approve | none | |
+| 2026-10-27 | task-031 | close  | reviewer | claude | opus   | medium | unit | 2 | done    | none | merged a1b2c3d |
 ```

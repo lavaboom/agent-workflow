@@ -115,6 +115,9 @@ the roadmap for Claude and Codex alike.
 5. A builder claiming a big task lists the tasks whose `With:` names it; small ones in the same files it may
    fold in (say so in both `status.md` files).
 6. Grooming ("groom the backlog"): re-check every `BACKLOG` small task older than two weeks the same way.
+7. **When you create tasks, tell the owner what each needs** (owner, 2026-10-05): a spec, a plan, both, or
+   straight from its `status.md`; for one buildable now, the tier and the builder model and effort from the
+   ladder (`model-policy.md`); which can run concurrently and which must wait, with `After:` saying the same.
 
 ## Groups
 

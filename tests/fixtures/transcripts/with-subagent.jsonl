@@ -1,0 +1,2 @@
+{"type":"user","message":{"role":"user","content":"dispatch a builder"}}
+{"type":"assistant","sessionId":"with-subagent","message":{"id":"msg_m1","model":"claude-sonnet-5-5","role":"assistant","content":[{"type":"text","text":"t"}],"usage":{"input_tokens":100,"output_tokens":10,"cache_read_input_tokens":1000,"cache_creation_input_tokens":50}}}

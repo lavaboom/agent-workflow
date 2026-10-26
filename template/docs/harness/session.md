@@ -37,7 +37,10 @@ Before the session ends, or before it hands off:
    ## Commands            start, verify, the focused debug command
    ```
 4. Follow-ups under `For the roadmap:`; owner questions as `Q-` items when you can commit on master.
-5. The manager also writes the board (`Next step:`, `Current issues:`) and commits it.
+5. Any session that commits on master (a claim, a planning commit, a close, an owner-queue item) refreshes
+   the board's `Next step:` and `Current issues:` in the same commit, so the next session reads the truth.
+   A session that built or reviewed outside the manager tab appends its own ledger row
+   (`model-policy.md` → The ledger) with its tool.
 
 `/clock-out` (`.claude/skills/clock-out/`) walks this list.
 
@@ -51,6 +54,12 @@ Before the session ends, or before it hands off:
 
 ## The fresh-session test
 
-Once a week (`maintenance.md`), open a session with no verbal context and ask: what is this system, how is it
-organised, how do I run it, how do I verify it, what is in progress and what is next. Every question it
-cannot answer from the repository names a file to fix.
+Once a month, or after a large change to the docs (`maintenance.md` step 7), open a session with no verbal
+context and ask it the five questions. Every question it cannot answer from the repository alone names a
+file to fix.
+
+1. What is this system, and how is it organised?
+2. How do I run it?
+3. How do I verify a change?
+4. What is next, and what is in progress?
+5. What is broken or blocked right now, and what waits on the owner?

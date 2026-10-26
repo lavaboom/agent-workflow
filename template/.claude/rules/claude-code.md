@@ -23,5 +23,7 @@ review-by: 2027-01-31
   tab reads `docs/harness/manager.md`; every other session reads `docs/harness/session.md` at the end.
 - **Context is disposable, the repository is not.** Hand off at 60 % context (the manager) or before a long
   task's second half (anyone): write `status.md` or a `handoff-<topic>.md`, then `/clear`.
-- **Record every dispatch in `docs/harness/ledger.md`** when its report arrives (the manager), one row per
-  build, review and fix round (`docs/harness/model-policy.md` → The ledger).
+- **Every build and review gets a ledger row** (`docs/harness/model-policy.md` → The ledger): the manager
+  writes it when a report arrives; a session that builds or reviews outside the manager tab appends its own
+  row with `tool: claude`. Any session that commits on master refreshes the board's `Next step:` and
+  `Current issues:` in the same commit.

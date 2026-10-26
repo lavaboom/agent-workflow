@@ -1,0 +1,3 @@
+Next steps for this fixture:
+1. Fill in AGENTS.md.
+2. Run agent-workflow check.

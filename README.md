@@ -52,7 +52,7 @@ node C:/code/agent-workflow/bin/agent-workflow.mjs ledger --usage
 A change to a managed file is an edit here, a commit, and a tag (`vMAJOR.MINOR.PATCH`); every project picks
 it up with `sync`. Keep the entry file under 100 lines and every rule under its `review-by` date: `npm test`
 runs the CLI's tests and `npm run check:template` checks the pack. The repository is public and holds no
-personal information or project names by design.
+personal information; the template pack names no project.
 
 ## Sources
 

@@ -40,6 +40,12 @@ and `sync` read it from `template/template.json`, never from git.
 `template.json` is the single source of truth for what the pack contains. `check --template` (below)
 fails when a file in `template/` is missing from it or listed but absent.
 
+Revised (manager, 2026-10-26): a third placeholder, `{{HARNESS_CLI}}`, joins `{{PROJECT}}` and `{{DATE}}`
+(§2, Placeholder substitution). When `adopt` (or `sync`, creating a new `owned` file) writes an `owned` file,
+it is replaced with the command that invokes the CLI doing the adopt: `node <absolute path of
+bin/agent-workflow.mjs, with forward slashes>`. Like the others it appears in `owned` files only; `check
+--template-only` fails when a `managed` file contains it (as for any `{{`).
+
 ## 2. The project manifest
 
 `docs/harness/manifest.json` in a project, written by `adopt` and `sync`:
@@ -187,6 +193,20 @@ spec/context/environment/verification/state/capability/none; `note` free text wi
 The parser ignores blank lines and the alignment row, trims cells, and reports a row with the wrong
 column count or an unknown enum value as malformed with its line number.
 
+Revised (manager, 2026-10-26; replaces the `step` and `outcome` values above, because the build row's
+outcome was undefined): `step` is build/review/fix/close, and `outcome` depends on the step:
+
+| step | outcome |
+|---|---|
+| build, fix | built / blocked / abandoned |
+| review | approve / fix / escalated |
+| close | done |
+
+The parser accepts exactly these combinations and reports any other as malformed with its line number.
+Statistics (§3 `ledger`): *first-pass approval* is a task whose first `review` row is `approve`; *fix rounds
+per task* counts `fix` rows; *escalations* counts `review` rows with outcome `escalated`; *failure layers
+(fix)* counts the layers of `review` rows with outcome `fix`.
+
 ## 5. Tests (node --test)
 
 - `adopt` on an empty temp dir: every pack file created, manifest written with correct hashes and version,
@@ -212,7 +232,7 @@ bin/agent-workflow.mjs        argument parsing, dispatch to src/
 src/adopt.mjs src/sync.mjs src/check.mjs src/ledger.mjs src/manifest.mjs src/pack.mjs src/hash.mjs src/table.mjs
 template/.claude/hooks/usage-log.mjs
 tests/*.test.mjs  tests/fixtures/…
-package.json                  { "name": "@lavaboom/agent-workflow", "type": "module", "bin": { "agent-workflow": "bin/agent-workflow.mjs" }, "scripts": { "test": "node --test tests/", "check:template": "node bin/agent-workflow.mjs check --template-only" }, "engines": { "node": ">=18" } }
+package.json                  { "name": "@lavaboom/agent-workflow", "type": "module", "bin": { "agent-workflow": "bin/agent-workflow.mjs" }, "scripts": { "test": "node --test", "check:template": "node bin/agent-workflow.mjs check --template-only" }, "engines": { "node": ">=18" } }
 ```
 
 Code philosophy applies (`template/docs/harness/building.md` → testable, documentable, readable): small
@@ -243,3 +263,10 @@ so the CLI vendors single files from a pinned checkout of any repository.
 - Tests: vendor a fixture checkout's `skills/x` and `agents/y.md` into a temp project; refusal on an
   unsupported path; refusal on a differing destination and `--force`; provenance written with hashes and
   the fixture's `VERSION`; `check` reports drift after editing a vendored file.
+
+## 8. Addendum: line endings in hashes
+
+Git's `autocrlf` gives the same file CRLF on Windows and LF on Linux, so a manifest written on one would
+report false drift on the other. Every sha256 the CLI records or compares (`manifest.files`, `vendored`)
+is computed over the file's bytes with `\r\n` normalised to `\n` first. Writes still copy the template's
+bytes unchanged.

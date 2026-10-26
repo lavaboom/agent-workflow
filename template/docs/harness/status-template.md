@@ -23,6 +23,7 @@ Touches: <paths, the narrowest true set, one line>
 Tier: <docs | static | unit | integration | e2e>
 Commit: (none)
 Updated: <YYYY-MM-DDTHH:MMZ>
+Next step: <the one thing the next session on this task does; "review" when REVIEW>
 
 Problem: what is wrong, or what is wanted, in two or three lines.
 Evidence of the problem: where it shows (a warning, a test, a review note).

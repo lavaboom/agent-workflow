@@ -1,0 +1,14 @@
+{
+  "name": "@lavaboom/agent-workflow",
+  "type": "module",
+  "bin": {
+    "agent-workflow": "bin/agent-workflow.mjs"
+  },
+  "scripts": {
+    "test": "node --test",
+    "check:template": "node bin/agent-workflow.mjs check --template-only"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

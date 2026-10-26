@@ -28,13 +28,17 @@ file or a diff.
 1. Read `docs/manager/board.md` (its `Next step:` and `Current issues:` first), the In progress section of
    `docs/ROADMAP.md`, the open `Q-` headings of `docs/OWNER_QUEUE.md`
    (`grep -n "^### Q-" docs/OWNER_QUEUE.md`), and `docs/harness/lessons.md` when a plan is coming.
-2. Run the capacity command (Workflow settings) when the project has one, and `get_usage` for `self`:
-   context %, the 5-hour and weekly usage and their resets.
-3. Reconcile the board's **Running** rows with `ListAgents`. A row whose agent is gone becomes a resume:
+2. Run the capacity command (Workflow settings) when the project has one (two notes, owner, 2026-10-22:
+   from PowerShell, quote the `--` that passes flags through to a script, or PowerShell drops it; and the
+   main checkout needs the install step of "Prepare a worktree" run once before the capacity command runs
+   there). Then read your own usage: context %, the 5-hour and weekly usage and their resets (Tool notes).
+3. Reconcile the board's **Running** rows with the list of live subagents (Tool notes). A row whose agent is gone becomes a resume:
    in that worktree, `git status --short` and `git log --oneline master..HEAD`, read `status.md` from the
    branch, and set the row's note to `resume: <plan task>, <committed / uncommitted state>`. Then remove
    every task worktree whose task is `DONE` on master, without asking (owner, 2026-10-22).
-4. Give the status brief (shape below), then act on the owner's message. With `Autopilot: on` and no
+4. When the board says `Remote control: on` and the session reports it off (every clear turns it off), turn
+   it back on (Tool notes); the app asks the owner to approve.
+5. Give the status brief (shape below), then act on the owner's message. With `Autopilot: on` and no
    message, run the queue.
 
 ## What the owner's message is
@@ -53,7 +57,7 @@ file or a diff.
 
 1. Find what exists: `git grep -il "<words>" master -- docs/tasks/active/ docs/ROADMAP.md docs/OWNER_QUEUE.md`.
    A match is named to the owner, who confirms before it is reused. Deep code questions go to `explorer`.
-2. Clarify in one batch (`AskUserQuestion` when the tool is there): only what the owner alone can answer
+2. Clarify in one batch (a question tool when there is one, else numbered questions in chat): only what the owner alone can answer
    (the experience, scope, money, external services, a product principle in tension). Decide the rest and
    tag it `(manager, <date>)`.
 3. Claim the task on master as `SPEC_IN_PROGRESS`, `Owner: claude:manager`, and write `brief-<topic>.md`
@@ -96,24 +100,25 @@ pause:
 4. **A task's first dispatch:** claim it (`IN_PROGRESS`, `Owner: claude:manager`, the claim commit,
    `git worktree add`, the copy step of "Prepare a worktree"). The builder runs the install step and starts
    the branch database when the plan says so.
-5. Dispatch the builder with the builder recipe: `subagent_type: builder`, **`model` and `effort` from the
-   plan task**, `run_in_background: true`. Add or update the **Running** row.
+5. Dispatch the builder with the builder recipe: the `builder` role, **model and effort from the plan
+   task**, in the background. Add or update the **Running** row.
 6. On its report, read the report only. **Write the ledger row** (`docs/harness/ledger.md`: `build`,
-   model, effort, tier, round 1). Follow-ups it names are written down now (`task-flow.md` → Small tasks).
+   model, effort, tier, round 1, outcome `built`, `blocked` or `abandoned`). Follow-ups it names are written down now (`task-flow.md` → Small tasks).
    Then dispatch the reviewer with the reviewer recipe (`subagent_type: reviewer`; Opus for code tiers,
    Sonnet allowed for `docs` and `static`; effort medium under about 150 changed lines, high above, never
    below the builder's).
 7. On the verdict: a ledger row (`review`, `approve` or `fix`, the layer). `FIX` → resume the builder
-   with `SendMessage` and the findings verbatim; one round, then a scoped re-review (`fix` and `review`
-   rows, round 2). After two `FIX` rounds on Sonnet, the third build is Opus at high (`escalated`). After
-   three rounds in total, rule (below). A `fix` or `escalated` row with layer `spec` or `context` gets a
-   lesson in `lessons.md` now, in one paragraph. On `APPROVE`, the row's step becomes `reviewed`; the next
-   plan task follows.
-8. When a task's last plan task is reviewed: the whole-branch reviewer (Opus; xhigh for hard areas, a
-   migration included, or concurrency), the same fix loop, then the merge from the main checkout with the
-   merge command. Then the close commit (`review-and-merge.md` → Close) with the board in the same commit:
-   the row moves to **Done this week**, follow-ups get rows, owner questions become `Q-` items, the roadmap
-   moves, the `done` ledger row. Push only as "Who pushes" says.
+   with the findings verbatim (Tool notes); one round, then a scoped re-review (`fix` and `review` rows,
+   round 2). After two `FIX` rounds on Sonnet, the third build is Opus at high (the review row says
+   `escalated`). After three rounds in total, rule (below). A `fix`, `escalated` or `blocked` row with layer
+   `spec` or `context` gets a lesson in `lessons.md` now, in one paragraph. On `APPROVE`, the row's step
+   becomes `reviewed`; the next plan task follows.
+8. When a task's last plan task is reviewed: first the builder merges master into the branch (the recipe
+   "Merge master before the whole-branch review"; owner, 2026-10-22), then the whole-branch reviewer (Opus;
+   xhigh for hard areas, a migration included, or concurrency), the same fix loop, then the merge from the
+   main checkout with the merge command. Then the close commit (`review-and-merge.md` → Close) with the
+   board in the same commit: the row moves to **Done this week**, follow-ups get rows, owner questions become
+   `Q-` items, the roadmap moves, the `close` ledger row (outcome `done`). Push only as "Who pushes" says.
 9. Clean up (`review-and-merge.md` → Clean up). The next release's spec and plan follow, if the brief has one.
 
 A group of small tasks runs the same way: one builder on the lead's branch, one reviewer, one merge.
@@ -123,16 +128,17 @@ A group of small tasks runs the same way: one builder on the lead's branch, one 
 `docs/harness/manager.md` → Rulings: the manager rules when the brief, the product principles or
 "no user would notice" settle it, tagged `(manager, <date>)` under the board's **Rulings**; the owner
 decides experiences the principles don't settle, money, what is stored, and anything needing their accounts.
-A ruling for a task with a branch travels to the builder by `SendMessage` ("add to the spec under
+A ruling for a task with a branch travels to the builder as a resume message ("add to the spec under
 Decisions: …, set `IN_PROGRESS`, continue"); before a branch exists the manager edits the spec on master.
 
 ## The context rule: hand off at 60 %
 
-`get_usage` for `self` at 60 % or more: dispatch nothing new (a fix round on a Running row is not new).
-When every Running row with a live agent has reported and been recorded: write the board (`Next step:`
-with the real next step, `Current issues:`), commit (`docs(manager): board`), push as "Who pushes" says,
-turn Remote Control off if it is on, tell the owner "this tab clears itself after this turn; send
-`/manager` to continue", and call `clear_session` for `self`. Never while a Running row has a live agent.
+Context at 60 % or more: dispatch nothing new (a fix round on a Running row is not new). When every
+Running row with a live agent has reported and been recorded: write the board (`Next step:` with the real
+next step, `Current issues:`), commit (`docs(manager): board`), push as "Who pushes" says, turn Remote
+Control off if it is on, send the owner's phone the next step when the machine has the notification hook
+(owner, 2026-10-22; Tool notes), tell the owner "this tab clears itself after this turn; send `/manager` to
+continue", and clear the session (Tool notes). Never while a Running row has a live agent.
 
 ## The status brief (fixed shape)
 
@@ -164,6 +170,15 @@ Biggest obstacle: <one line>
 
 ## Tool notes
 
-Claude Code: dispatch with the Agent tool (`subagent_type`, `model`, `effort`, `run_in_background`);
-resume with `SendMessage`; usage with `get_usage`. Codex: spawn the roles in `.codex/agents/` with the
-effort the ladder says; a Codex manager session writes its ledger rows with `tool: codex`.
+| Step | Claude Code | Codex |
+|---|---|---|
+| Dispatch a role | the Agent tool: `subagent_type`, `model`, `effort`, `run_in_background: true` | spawn the role from `.codex/agents/` with the ladder's effort |
+| Resume a live builder | `SendMessage` to its id | message the child agent (`/agent`) |
+| List live subagents | `ListAgents` | `/agent` |
+| Own usage and context | `get_usage` for `self` | `/status` |
+| Ask the owner in one batch | `AskUserQuestion` | numbered questions in chat |
+| Remote Control on or off | `set_remote_control` for `self` | not applicable |
+| Phone notification at hand-off | `node $HOME/.claude/hooks/pushover.mjs "Manager cleared at NN %: <next step>. Send /manager to continue."` when that file exists | not applicable |
+| Clear the session | `clear_session` for `self` (the clear happens when the turn ends) | `/new` |
+
+A Codex manager session writes its ledger rows with `tool: codex`.

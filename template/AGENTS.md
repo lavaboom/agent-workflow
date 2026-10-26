@@ -1,6 +1,7 @@
 # {{PROJECT}}
 
-<!-- The entry file for every coding agent (Claude Code, Codex, others). Keep it under 100 lines: it is a
+<!-- The entry file for every coding agent. Claude Code (2.1.277 or later) reads it natively because the project
+     has no CLAUDE.md, with .claude/rules/ alongside; Codex reads it natively. Keep it under 100 lines: it is a
      map, not a manual. Details live in docs/harness/ and are read on demand. Harness: agent-workflow v2. -->
 
 **What this is:** <one or two sentences: what the product does and for whom>.
@@ -72,6 +73,7 @@ The values the shared documents name ("the merge command (Workflow settings)"). 
 | Paid services | <cap; no-yes amount; ledger file> |
 | Who pushes | <only the owner; or who pushes what and when> |
 | Phase | <pre-launch / launched / maintenance> (drives `.claude/rules/phase-*.md`) |
+| Harness CLI | `{{HARNESS_CLI}}` (the template repository's CLI: `check`, `ledger`, `sync`, `vendor`) |
 | Workflow overrides | (none) |
 
 ## Topic documents

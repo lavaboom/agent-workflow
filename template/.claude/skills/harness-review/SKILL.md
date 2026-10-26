@@ -16,16 +16,16 @@ Run in the main checkout on `master`, with no builder running. The procedure is
 every step; write "nothing" where nothing applies. Decide, do not only observe: every step ends with a change
 or a dated "keep".
 
-1. **Numbers.** Run `node <agent-workflow>/bin/agent-workflow.mjs ledger` and `… ledger --usage`
-   (`<agent-workflow>` is the template repository's path; `docs/harness/manifest.json` → `templateVersion`
-   says which version this project is on). Paste the summary into the entry. Apply the ladder rules in
+1. **Numbers.** Run `<Harness CLI> ledger` and `… ledger --usage`
+   (`<Harness CLI>` is the Workflow settings row of that name in `AGENTS.md`; `docs/harness/manifest.json`
+   → `templateVersion` says which version this project is on). Paste the summary into the entry. Apply the ladder rules in
    `maintenance.md` step 1; edit `docs/harness/model-policy.md` only through the template repository
    (it is managed); a project-specific ladder change is a "Workflow overrides" line in `AGENTS.md` with the
    owner's yes.
 2. **Lessons.** Read the week's `fix`, `escalated` and `blocked` rows with layer `spec` or `context`;
    write or update a lesson in `docs/harness/lessons.md` for each; retire lessons that did not recur for a
    month (keep them under a "Retired" heading with the date).
-3. **Rules.** Run `node <agent-workflow>/bin/agent-workflow.mjs check`. For every `warn` or `fail`, act.
+3. **Rules.** Run `<Harness CLI> check`. For every `warn` or `fail`, act.
    Then read each always-on rule (`.claude/rules/*.md` without `paths:`, and `AGENTS.md` → Hard
    constraints) and ask the two questions from `maintenance.md` step 3. Move, delete, or renew the
    `review-by` date, in that order of preference.
@@ -34,7 +34,7 @@ or a dated "keep".
 5. **Tooling.** List `ecc-install.json` includes, `.mcp.json` servers, enabled plugins. For each, one line:
    used this week by which dispatch, or not. Remove what was unused for a month; write a `review-by` a
    month out for anything kept on faith.
-6. **Template.** `node <agent-workflow>/bin/agent-workflow.mjs sync --dry-run`. Report the version
+6. **Template.** `<Harness CLI> sync --dry-run`. Report the version
    difference and the files that would change or conflict. Apply (`sync`) when nothing is running and the
    owner has not asked to hold; resolve conflicts as `maintenance.md` says.
 7. **Fresh-session test** (monthly, or after a large docs change): ask a fresh session the five questions;

@@ -22,7 +22,7 @@ The planner (the manager, or whoever writes the task) assigns one tier per task 
 | `static` | lint, typecheck | CSS, markup, copy, config, a rename | a test suite, a database |
 | `unit` | `static` + the unit tests of the touched modules, named by file | a function, a component, a parser | the whole suite, a database |
 | `integration` | `unit` + the named integration files; on a branch database when the task has a migration | data layer, API route, migration, auth | the whole suite unless the project's gate is the only integration runner |
-| `e2e` | `integration` + the named browser flow from the task's own dev server (console clean) | a user flow across layers, a form that writes | |
+| `e2e` | `integration` + the named browser flow, as a command runnable from Bash (a Playwright or similar script) against the task's own dev server, console clean | a user flow across layers, a form that writes | an unscripted "click through it": a project without scripted browser tests tags the task `integration` and the builder pastes its manual browser look (steps, console) under `Evidence:` as a claim the reviewer reports as not checked |
 
 Rules of thumb:
 
@@ -31,7 +31,9 @@ Rules of thumb:
 - A UI change that a user can see is `e2e` when it writes data and `static` or `unit` when it does not,
   plus a browser look from the worktree's dev server, which is cheap and catches the obvious.
 - The whole gate (Workflow settings → Gate) runs once, at the merge, by the merge command. Builders and
-  reviewers run the tier, not the gate.
+  reviewers run the tier, not the gate. The whole-branch review re-runs the union of the tier commands of
+  every plan task on the branch plus the integration files the feature touches, and a browser pass for a UI
+  change.
 - When in doubt between two tiers, take the higher one and say why in the plan task.
 
 ## Acceptance checks (`Done when:`)

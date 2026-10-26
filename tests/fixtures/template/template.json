@@ -1,0 +1,14 @@
+{
+  "version": "2.1.0",
+  "files": [
+    { "path": "AGENTS.md", "policy": "owned" },
+    { "path": ".claude/rules/core.md", "policy": "managed" },
+    { "path": ".claude/rules/tasks.md", "policy": "managed" },
+    { "path": ".claude/skills/manager/SKILL.md", "policy": "managed" },
+    { "path": ".agents/skills/manager/SKILL.md", "policy": "managed", "from": ".claude/skills/manager/SKILL.md" },
+    { "path": "docs/harness/README.md", "policy": "managed" },
+    { "path": "docs/harness/building.md", "policy": "managed" },
+    { "path": "docs/harness/ledger.md", "policy": "owned" },
+    { "path": "docs/manager/board.md", "policy": "owned" }
+  ]
+}

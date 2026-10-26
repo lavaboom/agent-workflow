@@ -6,6 +6,6 @@
   "include": [],
   "exclude": [],
   "options": {
-    "_comment": "Only for an ECC module wanted whole (in practice the hooks runtime for cost tracking). Single skills and agents are vendored instead: node <agent-workflow>/bin/agent-workflow.mjs vendor --from <ECC checkout> skills/<name> agents/<name>.md (docs/harness/tooling.md). Apply this file with: npx ecc-universal@2.2.3 install --config ecc-install.json --dry-run, then without --dry-run. Record the choice and the date in docs/harness/review-log.md."
+    "_comment": "Only for an ECC module wanted whole (in practice the hooks runtime for cost tracking). Single skills and agents are vendored instead: <Harness CLI> vendor --from <ECC checkout> skills/<name> agents/<name>.md (docs/harness/tooling.md). Apply this file with: npx ecc-universal@2.2.3 install --config ecc-install.json --dry-run, then without --dry-run. Record the choice and the date in docs/harness/review-log.md."
   }
 }

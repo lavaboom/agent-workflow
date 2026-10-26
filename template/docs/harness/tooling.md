@@ -39,7 +39,7 @@ records where they came from:
 git clone --depth 1 --branch v2.2.3 https://github.com/affaan-m/ECC.git <ECC checkout>   # e.g. a sibling of the template repository
 
 # a skill: the whole folder; an agent: the one file (from the project root)
-node <agent-workflow>/bin/agent-workflow.mjs vendor --from <ECC checkout> skills/security-review agents/security-reviewer.md
+<Harness CLI> vendor --from <ECC checkout> skills/security-review agents/security-reviewer.md
 ```
 
 `vendor` copies `skills/<name>/` to `.claude/skills/<name>/` and `agents/<name>.md` to

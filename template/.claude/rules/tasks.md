@@ -17,7 +17,7 @@ review-by: 2027-01-31
   the claim commit. Done or dropped folders live under `completed/` (`docs/harness/task-flow.md`).
 - **`status.md` is the task's live state** and, for a small task, its spec. The format is
   `docs/harness/status-template.md`; the lines that matter: `Status`, `Owner`, `Branch`, `Touches`, `Tier`,
-  `Done when`, `Evidence`, `Updated` (UTC). `Done when` names commands and observable results, never
+  `Done when`, `Evidence`, `Updated` (UTC), `Next step`. `Done when` names commands and observable results, never
   "tests pass".
 - **`docs/ROADMAP.md` changes only in claim, planning and close commits on master**, from the main checkout.
   On a task branch, roadmap notes go under `For the roadmap:` in `status.md`; the close commit copies them.

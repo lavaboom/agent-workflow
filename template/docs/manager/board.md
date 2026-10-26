@@ -2,13 +2,14 @@
 
 The manager tab's memory (`.claude/skills/manager/SKILL.md`; `docs/harness/manager.md` → The board). It
 changes only in docs commits on master from the main checkout (`docs(manager): board`). A fresh tab reads
-it first; the owner reads it for "where are we". The first three lines are mandatory and are what any fresh
-session reads before anything else.
+it first; the owner reads it for "where are we". The first two lines are mandatory and are what any fresh
+session reads before anything else; the next two are the manager's switches.
 
 ```
 Next step: <the one thing the next turn does>
 Current issues: <what is broken or blocked right now, one line each, or "none">
 Autopilot: off
+Remote control: off
 ```
 
 ## Now

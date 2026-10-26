@@ -25,7 +25,7 @@ keep (new date), move (to a topic document, loaded on demand), or delete.
 
 ## The weekly review
 
-1. **The numbers.** `node <agent-workflow>/bin/agent-workflow.mjs ledger` (and `--usage`): Sonnet share,
+1. **The numbers.** `<Harness CLI> ledger` (and `--usage`): Sonnet share,
    first-pass approval per model, fix rounds per model and tier, escalations, failure layers, overkill
    candidates. Move the ladder (`model-policy.md`) when the numbers say so: Sonnet approved first pass on a
    tier for two weeks running is the default there; Opus approved first pass on `docs`/`static`/`unit` three
@@ -34,7 +34,7 @@ keep (new date), move (to a topic document, loaded on demand), or delete.
 2. **The lessons.** Each `fix`, `escalated` or `blocked` row with layer `spec` or `context` becomes or
    updates a lesson in `lessons.md`; one that recurs becomes a line in the "Sonnet-ready" checklist of
    `model-policy.md` or a rule. Lessons that stopped recurring are retired with the date.
-3. **The rules.** `node <agent-workflow>/bin/agent-workflow.mjs check`: entry-file size, number and size of
+3. **The rules.** `<Harness CLI> check`: entry-file size, number and size of
    always-on rules, missing metadata, past `review-by`, drift from the template, the board's mandatory
    lines. For each always-on rule, ask: did any dispatch this week need it? Would removing it change a
    decision? If not, move it to a topic document or delete it. A rule added this week because of one
@@ -46,7 +46,7 @@ keep (new date), move (to a topic document, loaded on demand), or delete.
    were used by a dispatch this week? Each unused piece for a month is removed (it costs context every
    session). Each need that came up without a tool (a recurring review finding, a manual check) gets one.
 6. **The template.** `manifest.json`'s `templateVersion` against the latest tag of the `agent-workflow`
-   repository; `node <agent-workflow>/bin/agent-workflow.mjs sync --dry-run` lists what would change; apply
+   repository; `<Harness CLI> sync --dry-run` lists what would change; apply
    it when no dispatch is running. A local edit to a managed file is a conflict: either upstream it (a
    commit and tag in the template repository, then `sync --take-template`) or keep it (`--keep-local`) and
    note why in the review entry.
@@ -60,7 +60,7 @@ keep (new date), move (to a topic document, loaded on demand), or delete.
 ## Changing a managed file
 
 Managed files (`manifest.json` → `policy: managed`) are the same in every project; the upstream is the
-`agent-workflow` repository. A change that every project should get is a commit there, tagged, then
+`agent-workflow` repository (the Harness CLI setting names its path). A change that every project should get is a commit there, tagged, then
 `sync` in each project; a change for this project only is an `owned` file (`AGENTS.md`, `hard-areas.md`,
 `phase-*.md`, `settings.json`) or a "Workflow overrides" line with the owner's yes. Editing a managed file in
 place works, but `sync` will report it as a conflict every time until it is upstreamed or recorded with

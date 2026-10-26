@@ -222,8 +222,11 @@ ablation).
 
 `main` before this design is tagged `v1.0.0`. The v1 files move to `v1/` unchanged; one-line stubs at the old
 root paths point there, because HomeXpense's and GroWith's `AGENTS.md` name those paths; the two user-level
-junctions are re-pointed to `v1/claude/...` so running manager tabs keep working. When both projects are on
-v2, `v1/`, the stubs and the junctions go (a checklist item in `ADOPTING.md`).
+junctions are re-pointed to `v1/claude/...` so running manager tabs keep working. Correction after review
+(2026-10-26): a personal skill beats a project skill of the same name, so the `~/.claude/skills/manager`
+junction must go before the first project migrates (and the agents junction with it, for least privilege);
+the project still on v1 gets project-level copies of the v1 agents and manager skill meanwhile
+(`ADOPTING.md` §2). When both projects are on v2, `v1/`, the stubs and the last junction go.
 
 ### D12. The CLI is plain Node with no dependencies (manager, 2026-10-26)
 
