@@ -5,4 +5,5 @@ record of tooling choices (`ecc-install.json`, plugins, MCP servers) with their 
 
 ## {{DATE}}
 
-Adopted agent-workflow v2.0.0. Numbers: none yet. Tooling: none yet. Next review: in one week.
+Adopted agent-workflow v2 (the version: `docs/harness/manifest.json` → `templateVersion`). Numbers: none yet.
+Tooling: none yet. Next review: in one week.

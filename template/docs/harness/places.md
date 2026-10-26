@@ -8,6 +8,8 @@ review-by: 2027-01-31
 
 ## The two places
 
+`master` in every harness document means the branch the Main branch setting names (`main` in some projects).
+
 - **Main checkout** (Workflow settings → Main checkout), on `master`: only docs commits for claims, closes
   and planning, and the project's merge command. Never write code here or commit anything else to master.
   Other agents' uncommitted work may sit here: commit only your own paths (`git commit -- <paths>`); never

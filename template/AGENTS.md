@@ -58,6 +58,7 @@ The values the shared documents name ("the merge command (Workflow settings)"). 
 | Setting | Value |
 |---|---|
 | Main checkout | `<absolute path>` |
+| Main branch | `master` (or `main`; the shared documents say `master` and mean this branch) |
 | Worktrees | `../<project>-worktrees/task-NNN-<slug>/` |
 | Prepare a worktree | <copy env files from the main checkout; the install step> |
 | Branch database | <start and cleanup commands, or (none)> |

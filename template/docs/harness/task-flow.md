@@ -18,8 +18,8 @@ follows "Picking up a task", claims the task itself if nobody has, and works in 
 | A task's design | `docs/tasks/<active or completed>/<task>/spec-*.md` | whoever specs the task |
 | A task's live state: owner, branch, commit, tier, evidence, notes | `<task>/status.md` | the claim and close commits; the task's owner in between, on its branch |
 
-Master is the **local** `master` branch; `git show master:<path>` reads the current version from any
-worktree. Never create a second spec for a task that has one.
+Master is the **local** main branch (Workflow settings → Main branch; `master` here stands for it);
+`git show master:<path>` reads the current version from any worktree. Never create a second spec for a task that has one.
 
 ## Task states
 
