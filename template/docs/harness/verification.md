@@ -20,7 +20,7 @@ The planner (the manager, or whoever writes the task) assigns one tier per task 
 |---|---|---|---|
 | `docs` | the docs link or format check; any command the doc quotes, once, to prove it is right | documentation, task files, README | a test suite, a database |
 | `static` | lint, typecheck | CSS, markup, copy, config, a rename | a test suite, a database |
-| `unit` | `static` + the unit tests of the touched modules, named by file | a function, a component, a parser | the whole suite, a database |
+| `unit` | `static` + the unit tests of the touched modules, named by file | a function, a component, a parser | the whole suite (unless a path-scoped owner rule in the project's `.claude/rules/` requires it for those paths), a database |
 | `integration` | `unit` + the named integration files; on a branch database when the task has a migration | data layer, API route, migration, auth | the whole suite unless the project's gate is the only integration runner |
 | `e2e` | `integration` + the named browser flow, as a command runnable from Bash (a Playwright or similar script) against the task's own dev server, console clean | a user flow across layers, a form that writes | an unscripted "click through it": a project without scripted browser tests tags the task `integration` and the builder pastes its manual browser look (steps, console) under `Evidence:` as a claim the reviewer reports as not checked |
 
