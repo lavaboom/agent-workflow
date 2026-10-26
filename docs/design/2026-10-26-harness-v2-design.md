@@ -285,9 +285,11 @@ ecc-install.json                  optional                                      
 The exact manifest JSON shape, hash algorithm (sha256 of file bytes), the `sync` conflict report format, the
 ledger table parser's tolerance, and the test layout. The behaviour is specified in `docs/design/cli-spec.md`.
 
-## 8. Open questions for the owner
+## 8. Questions for the owner, answered (owner, 2026-10-26)
 
-1. Reviews on the `docs` and `static` tiers by Sonnet (D5): keep or revert to Opus for everything?
-2. The usage-log hook reads session transcripts on this machine to count tokens per model. Fine?
-3. Once HomeXpense and GroWith are on v2: delete `v1/` and the junctions in the same week, or keep a
-   release's grace?
+1. Sonnet reviews on the `docs` and `static` tiers: kept.
+2. The usage-log hook reading session transcripts on this machine: fine.
+3. Old versions are deleted as soon as the new one is in place: `v1/`, the root stubs and the junctions go
+   with the migration, no grace period.
+4. Every existing project migrates at once (the two v1 projects and a Codex-only one); a single idempotent
+   `fresh-init` script runs adoption the first time and `sync` every time after (see `cli-spec.md` §9).

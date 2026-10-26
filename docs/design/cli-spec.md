@@ -270,3 +270,99 @@ Git's `autocrlf` gives the same file CRLF on Windows and LF on Linux, so a manif
 report false drift on the other. Every sha256 the CLI records or compares (`manifest.files`, `vendored`)
 is computed over the file's bytes with `\r\n` normalised to `\n` first. Writes still copy the template's
 bytes unchanged.
+
+## 9. Addendum (owner, 2026-10-26): `init` and the `fresh-init` launcher
+
+The owner wants one script to drop into any project that does every deletion and change a migration
+needs, and that can be re-run later to pick up updated rules. So: one idempotent CLI command, `init`, and a
+thin Windows launcher, `scripts/fresh-init.cmd`, that calls it. `init` never commits; it prints the git
+command to run.
+
+### `init --project <dir> [--name <n>] [--dry-run] [--json]`
+
+**Not yet adopted** (no `docs/harness/manifest.json`), in this order:
+
+1. **v1 cleanup.** Delete `CLAUDE.md` when every non-blank line starts with `@` (the v1 import file); any
+   other `CLAUDE.md` is left and reported (`no-claude-md` will warn). Delete `docs/AGENT_PROTOCOL.md` and
+   `docs/tasks/README.md` when their content mentions `agent-workflow` (v1 pointer files). Delete the
+   project-level `.claude/agents/` and `.claude/skills/manager/` directories when they exist (v1 copies);
+   other skills stay.
+2. **The old entry file.** When `AGENTS.md` exists, move it to `docs/project-guide.md` (a `git mv` is not
+   available without shelling out: write the new file, delete the old; the project's git sees a rename)
+   with this block prepended:
+   ```
+   <!-- Moved from AGENTS.md by agent-workflow init on <date>. This is the project's own guide: what it is,
+        how it is built, its rules. The v2 entry file AGENTS.md stays under 100 lines and points here; the
+        rules that bite are split into .claude/rules/ (path-scoped) and docs/ topic files by hand. -->
+   ```
+   Before moving, parse it:
+   - the **Workflow settings table** (a markdown table under a heading containing "Workflow settings"): a
+     map setting → value, with the setting name normalised (strip anything in parentheses or backticks,
+     trim; so "Hard areas (`opus-xhigh`)" → "Hard areas", "Who pushes (owner, 2026-10-22)" → "Who pushes",
+     the parenthetical kept inside the value as "(owner, 2026-10-22) " prefix);
+   - the **pointer paragraph**: dropped (not carried into the guide): the paragraph(s) before the first
+     `##` heading that mention `agent-workflow`.
+3. **Adopt** with the pack (same as `adopt`), with these differences: an existing owned file is kept
+   (reported `kept`) and its hash recorded; an existing managed file that differs is **replaced** after the
+   old content is saved under `docs/harness/init-backup/<same relative path>` (reported `replaced, old
+   copy in docs/harness/init-backup/...`); `{{PROJECT}}` is `--name`, else the `Project` setting from the
+   old table, else the folder name.
+4. **Fill the new `AGENTS.md`** from the old table: for each v2 Workflow settings row whose setting name
+   matches a parsed v1 setting (same normalised name), replace the row's `<placeholder>` cell with the v1
+   value. v1-only settings: `Builder checks` goes into an HTML comment directly under the tier table
+   (`<!-- v1 Builder checks: <value> ; split these into the tier rows above -->`); `Local services` and
+   `Project` are dropped (fixed path; title). The `Harness CLI` row is filled as in adopt. Line 1 becomes
+   `# <project name>`.
+5. **The board.** When `docs/manager/board.md` was kept and lacks a `Next step:` line, insert after the
+   first heading line: a blank line, then a fenced block with `Next step: <fill in>` and
+   `Current issues: <fill in>`, then a blank line. Same for a missing `Current issues:`.
+6. **.gitignore.** Append each line of `.gitignore.harness` that `.gitignore` lacks (create `.gitignore`
+   if absent), then delete `.gitignore.harness` and drop it from the manifest.
+7. **Report** every action (one line each, same verbs as adopt plus `deleted`, `moved`, `kept`,
+   `replaced`, `filled <n> settings`, `backup`), then the NEXT-STEPS text with one extra first line when
+   `docs/project-guide.md` was written: "0. docs/project-guide.md holds the old AGENTS.md: split its rules
+   into .claude/rules/ and docs/, then trim it", then the git command:
+   `git add -A -- AGENTS.md .claude .agents .codex docs ecc-install.json .gitignore && git commit -m "docs(harness): adopt agent-workflow v<version>"`
+   (plus `CLAUDE.md docs/AGENT_PROTOCOL.md` in the `git add` when they were deleted, so the deletions are staged).
+
+**Already adopted:** run `sync` (default options) and step 6's `.gitignore` check; report; print
+`git add -A -- .claude .agents .codex docs && git commit -m "docs(harness): sync agent-workflow v<version>"`
+when anything changed. Exit codes as `sync`.
+
+`--dry-run` prints the plan with nothing written, including the settings that would be filled.
+
+### `scripts/fresh-init.cmd`
+
+A Windows launcher a user drops into a project folder or runs by path:
+
+```
+@echo off
+setlocal
+set "AW=%AGENT_WORKFLOW_HOME%"
+if "%AW%"=="" set "AW=C:\code\agent-workflow"
+if not exist "%AW%\bin\agent-workflow.mjs" (
+  echo agent-workflow was not found at "%AW%". Clone it there or set AGENT_WORKFLOW_HOME.
+  exit /b 2
+)
+node "%AW%\bin\agent-workflow.mjs" init --project "%CD%" %*
+```
+
+It passes extra arguments through (`--dry-run`, `--name`). It does not pull the template repository: a
+line in `ADOPTING.md` says to `git -C C:\code\agent-workflow pull` first on a machine that is not the
+template's origin.
+
+### Tests
+
+- A fixture v1 project (a `CLAUDE.md` of three `@` lines, an `AGENTS.md` with a pointer paragraph, a
+  settings table with the v1 names including "Hard areas (`opus-xhigh`)", "Who pushes (owner, 2026-10-22)",
+  "Builder checks", "Local services", and project sections after it; `docs/AGENT_PROTOCOL.md` and
+  `docs/tasks/README.md` pointer files; a v1 `docs/manager/board.md` without the mandatory lines;
+  existing `docs/ROADMAP.md`; a `.codex/config.toml` holding only `[features]\nmulti_agent = true`;
+  `.claude/agents/opus-high.md`): `init` deletes the v1 files, moves the entry file, fills the settings
+  (assert the Gate, Merge, Hard areas, Who pushes cells and the Builder checks comment), keeps the roadmap,
+  backs up and replaces the Codex config, inserts the board lines, merges `.gitignore`, writes the manifest,
+  prints the git command with the deleted files; a second `init` runs sync and changes nothing.
+- A Codex-only fixture (an `AGENTS.md` with no settings table, a prose `CLAUDE.md`): the entry file moves
+  to the guide, no settings filled, the prose `CLAUDE.md` is left and reported.
+- An empty project: `init` equals `adopt`.
+- `--dry-run` writes nothing.

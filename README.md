@@ -6,18 +6,18 @@ with least privilege; verification tiers so nothing is done because it "looks go
 builds most tasks with Sonnet and records what every dispatch cost; and a weekly review that keeps the
 instructions small as the project changes phase.
 
-Version 2 (2026-10-26). Version 1 is frozen under `v1/` and tagged `v1.0.0` until the projects on it
-migrate. The design and its sources: `docs/design/2026-10-26-harness-v2-design.md`.
+Version 2 (2026-10-26). Version 1 is tag `v1.0.0` only; nothing of it remains on `main`. The design and
+its sources: `docs/design/2026-10-26-harness-v2-design.md`.
 
 ## What is here
 
 | Path | What |
 |---|---|
 | `template/` | The pack a project receives: `AGENTS.md`, `.claude/` (rules, agents, skills, a hook, settings), `.codex/`, `docs/harness/` (the topic documents), the project-owned starters (roadmap, owner queue, board, ledger, lessons). `template.json` lists every file and whether it is `managed` (kept identical by `sync`) or `owned` (created once, then the project's). |
-| `bin/agent-workflow.mjs` | The CLI: `adopt` (install the pack), `sync` (update managed files), `check` (lean and freshness checks), `ledger` (the week's numbers), `vendor` (copy single ECC pieces with provenance). Plain Node, no dependencies. |
+| `bin/agent-workflow.mjs` | The CLI: `init` (adopt or sync, with v1 cleanup), `adopt`, `sync`, `check` (lean and freshness checks), `ledger` (the week's numbers), `vendor` (copy single ECC pieces with provenance). Plain Node, no dependencies. |
+| `scripts/fresh-init.cmd` | The one script a project runs: first time adopts, later runs sync. Drop it in a project folder or run it by path. |
 | `docs/design/` | The v2 design, with every decision tagged, and the CLI specification. |
-| `ADOPTING.md` | How a new or existing project adopts v2, for Claude Code and Codex, and how to migrate from v1. |
-| `v1/` | The previous workflow, unchanged, reachable through the root stubs and the user-level junctions until the last project leaves it. |
+| `ADOPTING.md` | How a new or existing project adopts v2, for Claude Code and Codex, and how a v1 project migrated. |
 
 ## The harness in one paragraph
 
@@ -33,12 +33,9 @@ a week the harness itself is reviewed: numbers, rules, phase, tooling, template 
 ## Using it
 
 ```bash
-# a project adopts the pack (run from the project root)
-node C:/code/agent-workflow/bin/agent-workflow.mjs adopt --name <project>
-
-# later: update managed files to this repository's current version
-node C:/code/agent-workflow/bin/agent-workflow.mjs sync --dry-run
-node C:/code/agent-workflow/bin/agent-workflow.mjs sync
+# a project adopts the pack, or updates it (run from the project root)
+C:codeagent-workflowscriptsresh-init.cmd --dry-run
+C:codeagent-workflowscriptsresh-init.cmd
 
 # the weekly review's helpers
 node C:/code/agent-workflow/bin/agent-workflow.mjs check

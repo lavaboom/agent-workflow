@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.1.0 (2026-10-26)
+
+`init` and `scripts/fresh-init.cmd`: one idempotent entry point that adopts a project the first time (with
+v1 cleanup and the old entry file moved to `docs/project-guide.md`) and syncs it every time after. `v1/` and
+the root stubs are removed from `main` (tag `v1.0.0` keeps them). Owner decisions of 2026-10-26 recorded.
+
 ## v2.0.0 (2026-10-26)
 
 The harness is copied into each project instead of linked from it; one entry file (`AGENTS.md`) for every

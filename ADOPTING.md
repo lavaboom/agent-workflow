@@ -1,21 +1,44 @@
 # Adopting agent-workflow v2
 
-For a new project, for an existing project with no harness, and for a project on v1. Claude Code
-≥ 2.1.277 (it reads `AGENTS.md` natively) and Codex CLI ≥ 0.146 are assumed; Node ≥ 18 for the CLI.
+For a new project, an existing project with no harness, a project on v1, and keeping any of them current.
+Claude Code ≥ 2.1.277 (it reads `AGENTS.md` natively) and Codex CLI ≥ 0.146 are assumed; Node ≥ 18 for the
+CLI. The template repository lives at `C:codeagent-workflow` on the owner's machine (set
+`AGENT_WORKFLOW_HOME` elsewhere).
+
+## 0. One script for every case: `fresh-init`
+
+`scripts/fresh-init.cmd` (owner, 2026-10-26) is the one entry point. Run it from the project root, or copy it
+into the project folder and double-click it:
+
+```bat
+C:codeagent-workflowscriptsresh-init.cmd            :: first run: adopt; later runs: sync
+C:codeagent-workflowscriptsresh-init.cmd --dry-run  :: show the plan, change nothing
+```
+
+It runs `agent-workflow init`, which is idempotent:
+
+- **First run** (the project has no `docs/harness/manifest.json`): removes the v1 files when it finds them
+  (an import-only `CLAUDE.md`, the `docs/AGENT_PROTOCOL.md` and `docs/tasks/README.md` pointer files, a
+  project-level `.claude/agents/` or `.claude/skills/manager/`), moves the old `AGENTS.md` to
+  `docs/project-guide.md` with its Workflow settings carried into the new entry file, keeps the project's
+  roadmap, owner queue, board and local-services doc, backs up and replaces a differing managed file under
+  `docs/harness/init-backup/`, adds the mandatory board lines, merges `.gitignore`, and prints the next
+  steps and the git command. Nothing is committed by the script.
+- **Later runs**: `sync` (managed files updated to the template's current version, local edits reported as
+  conflicts) plus the `.gitignore` check. So updating a project to new global rules is: pull the template
+  repository (`git -C C:codeagent-workflow pull` on a machine that is not where the rules are edited),
+  then run `fresh-init` in the project, then commit. No deleting is needed.
+
+A new project needs no more than "follow the procedures in `C:codeagent-workflow`": the first step of
+those procedures is this script, and `template/NEXT-STEPS.txt` is what it prints afterwards.
 
 ## 1. New project, or an existing project with no harness
 
 Initialisation is its own session: nothing else happens in it until step 10 passes.
 
-1. From the project root, on its main branch, with a clean tree:
-
-   ```bash
-   node C:/code/agent-workflow/bin/agent-workflow.mjs adopt --name <project>
-   ```
-
-   It writes the pack (`template/template.json` lists the files), `docs/harness/manifest.json`, and prints
-   the next steps. It refuses to overwrite a file that already exists with different content; resolve those
-   by hand or rerun with `--force-owned` (keep yours) or `--force-managed` (take the template's).
+1. From the project root, on its main branch, with a clean tree: `C:codeagent-workflowscriptsresh-init.cmd`
+   (§0). It writes the pack (`template/template.json` lists the files), `docs/harness/manifest.json`, and
+   prints the next steps.
 2. `AGENTS.md`: fill every `<placeholder>`: what the project is, the install, readiness and dev-server
    commands, the tier table (which commands run for `docs`, `static`, `unit`, `integration`, `e2e`), the
    project-specific hard constraints, every Workflow setting. Stay under 100 lines; details go in
@@ -40,61 +63,46 @@ Initialisation is its own session: nothing else happens in it until step 10 pass
 Codex needs nothing more: it reads `AGENTS.md`, `.codex/config.toml` and `.agents/skills/`. Claude Code
 needs nothing more either: `.claude/` is in the project. There is no user-level install.
 
-## 2. A project on v1 (the two projects still on it)
+## 2. A project on v1
 
 Yes, a fresh initialisation: v1's files point outside the project and its roles and rules differ from v2's.
-Do it in the project's main checkout on master, with no builder running and the manager tab idle (its
-board committed). One commit at the end.
+Every project on v1 migrates at the same time (owner, 2026-10-26), because Claude Code gives a personal
+skill precedence over a project skill of the same name: while the v1 `~/.claude/skills/manager` junction
+exists, `/manager` in a migrated project would still run the v1 manager. So, once, on the machine:
 
-**Before the first project migrates, remove the two v1 user-level junctions.** Claude Code gives a
-personal skill precedence over a project skill of the same name (verified 2026-10-26 in the skills docs), so
-while `~/.claude/skills/manager` exists, `/manager` in a migrated project would still run the v1 manager and
-bypass the whole v2 flow; the v1 agents in `~/.claude/agents` lose to project definitions but stay visible
-with all tools. The project still on v1 gets project-level copies instead:
-
-```powershell
-cmd /c rmdir "%USERPROFILE%\.claude\skills\manager"
-cmd /c rmdir "%USERPROFILE%\.claude\agents"
-# in the project still on v1 (its main checkout):
-Copy-Item -Recurse C:\code\agent-workflow\v1\claude\agents .claude\agents
-Copy-Item -Recurse C:\code\agent-workflow\v1\claude\skills\manager .claude\skills\manager
+```bat
+cmd /c rmdir "%USERPROFILE%.claudeskillsmanager"
+cmd /c rmdir "%USERPROFILE%.claudeagents"
+cmd /c rmdir "%USERPROFILE%.agent-workflow"
 ```
 
-Commit those copies there (`docs(harness): v1 agents and manager skill, project-level until v2`); they are
-deleted again by that project's own migration.
+Then, per project, in its main checkout on master with the manager tab idle (its board committed):
 
-Delete first:
+1. `fresh-init --dry-run`, read the plan, then `fresh-init` (§0). It removes the v1 files, moves the old
+   `AGENTS.md` to `docs/project-guide.md` and carries its Workflow settings into the new entry file.
+2. **The editorial split** of `docs/project-guide.md`, by hand or by a dispatched Opus builder with this
+   recipe (the result is reviewed like any task):
+   - `AGENTS.md` stays under 100 lines: fill "What this is", "Stack", the three commands, the tier table
+     (v1's "Builder checks" comment under it: lint and typecheck under `static`, the unit command under
+     `unit`, the integration command under `integration`, the browser or e2e command under `e2e`), the
+     "How the code is organised" row (the project's architecture doc), hard constraints 10 and 11 (the one
+     or two project rules that bite in every task, one line each, with their owner tags), and the Phase row.
+   - Each v1 section that is a **rule for a part of the codebase** becomes a path-scoped file
+     `.claude/rules/<topic>.md` with `paths:` for the files it governs, the `source`/`applies`/`review-by`
+     header, and the text trimmed to what an agent needs while editing those files (a "Database Safety
+     Rules" section → `paths: supabase/**, src/lib/db/**`; a "Definition of done: UI work" section →
+     `paths: src/app/**, src/components/**`). The v1 "Rules every builder prompt names" setting lists them.
+   - Each v1 section that is **reference** (architecture, deployment, conventions, test strategy) moves to
+     its own `docs/<topic>.md` when no such doc exists yet, or is merged into the existing one; the guide
+     keeps a one-line pointer.
+   - `.claude/rules/hard-areas.md` gets the v1 "Hard areas" paths; `.claude/rules/phase-pre-launch.md`
+     stays or goes with the Phase; `docs/local-services.md` is kept as it was.
+   - When nothing is left in `docs/project-guide.md` but pointers, delete it.
+3. Steps 7 to 11 of §1: readiness, `check`, the commit, the fresh-session test. The manager tab is cleared
+   once so it loads the project's v2 skill.
 
-- `CLAUDE.md` (the three import lines). Claude Code reads `AGENTS.md` natively; a `CLAUDE.md` present would
-  stop that.
-- `docs/AGENT_PROTOCOL.md` and the pointer text at the top of `docs/tasks/README.md` (both pointed at this
-  repository; `adopt` writes the v2 `docs/tasks/README.md`).
-- In `AGENTS.md`: the pointer paragraph ("This project follows the shared workflow: read
-  `C:/code/agent-workflow/WORKFLOW.md` first…") and the "Workflow settings" table. Keep the project's own
-  sections (overview, stack, commands, project rules); you will paste them into the v2 entry file.
-- Any `.claude/agents/`, `.claude/skills/manager/` or `.claude/rules/` the project has (v1 projects should
-  have none).
-
-Then:
-
-1. Move the old `AGENTS.md` aside (`git mv AGENTS.md docs/AGENTS.v1.md`) and run `adopt --name <project>`.
-2. Rebuild `AGENTS.md` from the template and `docs/AGENTS.v1.md`: the v1 Workflow settings map one to one
-   onto the v2 table (`Gate`, `Merge`, `Gate log`, `Capacity`, `Branch database`, `Prepare a worktree`,
-   `Hard areas`, `Rules every builder prompt names`, `Docs a builder reads`, `Paid services`, `Who pushes`);
-   v1's "Builder checks" becomes the tier table (lint and typecheck under `static`; the unit command under
-   `unit`; the integration command under `integration`; the UI definition of done under `e2e`). v1's
-   project rules that bite daily (at most a few lines each) become hard constraints 10 and 11; the rest stay
-   in the project's docs. Then delete `docs/AGENTS.v1.md`.
-3. Steps 3 to 11 of §1. `docs/ROADMAP.md`, `docs/OWNER_QUEUE.md`, `docs/manager/board.md` and the task
-   folders are kept as they are: `adopt` skips an existing identical file and refuses a different one, so
-   run it, then answer its conflict list with `--force-owned` to keep the project's own copies. Add the
-   three mandatory lines to the top of the board. New task folders use `docs/harness/status-template.md`
-   (`Tier:` and `Evidence:` are new); existing ones are updated when next touched.
-4. The manager tab: `/manager` now resolves to the project's `.claude/skills/manager/` (the user-level
-   junction is gone, see above); clear the tab once so it loads the v2 skill.
-
-When both projects are on v2: delete `v1/` and the root stubs `WORKFLOW.md`, `AGENT_PROTOCOL.md`,
-`TASKS.md` in this repository, and the last junction (`cmd /c rmdir "%USERPROFILE%\.agent-workflow"`).
+When every project is on v2, the template repository drops `v1/` and the root stubs `WORKFLOW.md`,
+`AGENT_PROTOCOL.md`, `TASKS.md` (owner, 2026-10-26: no grace period).
 
 ## 3. Keeping a project current
 
