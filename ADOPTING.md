@@ -2,17 +2,21 @@
 
 For a new project, an existing project with no harness, a project on v1, and keeping any of them current.
 Claude Code ≥ 2.1.277 (it reads `AGENTS.md` natively) and Codex CLI ≥ 0.146 are assumed; Node ≥ 18 for the
-CLI. The template repository lives at `C:degent-workflow` on the owner's machine (set
+CLI. The template repository lives at `C:\code\agent-workflow` on the owner's machine (set
 `AGENT_WORKFLOW_HOME` elsewhere).
 
 ## 0. One script for every case: `fresh-init`
 
-`scripts/fresh-init.cmd` (owner, 2026-10-26) is the one entry point. Run it from the project root, or copy it
-into the project folder and double-click it:
+`template/fresh-init.cmd` (owner, 2026-10-26) is the one entry point. The first run goes by path from the
+project root; after that the project has its own copy, `fresh-init.cmd` at its root (a managed pack file,
+so `sync` keeps it current), to double-click in Explorer or run from a terminal. Double-clicked, the window
+stays open until a key is pressed, so the result is readable. The project's copy always acts on its own
+folder; the template's copy acts on the current folder and refuses one that is not a project root (no
+`.git/`, no manifest), which is what a Start-menu or search-result launch hands it:
 
 ```bat
-C:degent-workflowscriptsresh-init.cmd            :: first run: adopt; later runs: sync
-C:degent-workflowscriptsresh-init.cmd --dry-run  :: show the plan, change nothing
+C:\code\agent-workflow\template\fresh-init.cmd            :: first run: adopt; later runs: sync
+C:\code\agent-workflow\template\fresh-init.cmd --dry-run  :: show the plan, change nothing
 ```
 
 It runs `agent-workflow init`, which is idempotent:
@@ -26,17 +30,20 @@ It runs `agent-workflow init`, which is idempotent:
   steps and the git command. Nothing is committed by the script.
 - **Later runs**: `sync` (managed files updated to the template's current version, local edits reported as
   conflicts) plus the `.gitignore` check. So updating a project to new global rules is: pull the template
-  repository (`git -C C:degent-workflow pull` on a machine that is not where the rules are edited),
-  then run `fresh-init` in the project, then commit. No deleting is needed.
+  repository (`git -C C:\code\agent-workflow pull` on a machine that is not where the rules are edited),
+  then run `fresh-init` in the project, then commit with the command it prints (exact paths, so the
+  project's own uncommitted work stays out of the sync commit). No deleting is needed. A file the merged
+  `.gitignore` lists but git already tracks (`.claude/settings.local.json`, usually) is untracked once by hand:
+  `git rm --cached .claude/settings.local.json`.
 
-A new project needs no more than "follow the procedures in `C:degent-workflow`": the first step of
+A new project needs no more than "follow the procedures in `C:\code\agent-workflow`": the first step of
 those procedures is this script, and `template/NEXT-STEPS.txt` is what it prints afterwards.
 
 ## 1. New project, or an existing project with no harness
 
 Initialisation is its own session: nothing else happens in it until step 10 passes.
 
-1. From the project root, on its main branch, with a clean tree: `C:degent-workflowscriptsresh-init.cmd`
+1. From the project root, on its main branch, with a clean tree: `C:\code\agent-workflow\template\fresh-init.cmd`
    (§0). It writes the pack (`template/template.json` lists the files), `docs/harness/manifest.json`, and
    prints the next steps.
 2. `AGENTS.md`: fill every `<placeholder>`: what the project is, the install, readiness and dev-server

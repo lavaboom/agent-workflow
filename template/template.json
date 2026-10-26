@@ -1,8 +1,9 @@
 {
-  "version": "2.1.0",
+  "version": "2.1.1",
   "files": [
     { "path": "AGENTS.md", "policy": "owned" },
     { "path": "ecc-install.json", "policy": "owned" },
+    { "path": "fresh-init.cmd", "policy": "managed" },
     { "path": ".gitignore.harness", "policy": "owned" },
 
     { "path": ".claude/settings.json", "policy": "owned" },

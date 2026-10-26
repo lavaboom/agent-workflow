@@ -54,7 +54,8 @@ init:    --name <project name>
          settings from the old table, adds the board's "Next step:"/"Current issues:" lines, and merges
          .gitignore.harness into .gitignore. Adopted: runs sync, then the .gitignore merge.
          Prints every deletion, move, replacement and filled setting, then the git command to commit.
-         Windows launcher: scripts/fresh-init.cmd (runs init on the current folder).
+         Windows launcher: template/fresh-init.cmd (runs init on its own folder; part of the pack, so
+         every adopted project carries its own copy and sync keeps it current).
 adopt:   --name <project name>  --force-owned  --force-managed
 sync:    --take-template  --keep-local  --prune
 check:   --template-only

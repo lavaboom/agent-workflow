@@ -275,8 +275,11 @@ bytes unchanged.
 
 The owner wants one script to drop into any project that does every deletion and change a migration
 needs, and that can be re-run later to pick up updated rules. So: one idempotent CLI command, `init`, and a
-thin Windows launcher, `scripts/fresh-init.cmd`, that calls it. `init` never commits; it prints the git
-command to run.
+thin Windows launcher, `template/fresh-init.cmd`, that calls it. `init` never commits; it prints the git
+command to run. The launcher is a managed pack file (revised 2026-10-26): every adopted project carries a
+copy at its root, `sync` keeps it current, and the adopt and sync git commands stage it. The sync git
+command names the exact paths that changed plus the manifest, never a directory, so a project's own
+uncommitted work is never swept into the sync commit.
 
 ### `init --project <dir> [--name <n>] [--dry-run] [--json]`
 
@@ -331,23 +334,18 @@ when anything changed. Exit codes as `sync`.
 
 `--dry-run` prints the plan with nothing written, including the settings that would be filled.
 
-### `scripts/fresh-init.cmd`
+### `template/fresh-init.cmd`
 
-A Windows launcher a user drops into a project folder or runs by path:
-
-```
-@echo off
-setlocal
-set "AW=%AGENT_WORKFLOW_HOME%"
-if "%AW%"=="" set "AW=C:\code\agent-workflow"
-if not exist "%AW%\bin\agent-workflow.mjs" (
-  echo agent-workflow was not found at "%AW%". Clone it there or set AGENT_WORKFLOW_HOME.
-  exit /b 2
-)
-node "%AW%\bin\agent-workflow.mjs" init --project "%CD%" %*
-```
-
-It passes extra arguments through (`--dry-run`, `--name`). It does not pull the template repository: a
+A Windows launcher: run by path from the project root the first time, then the project's own copy. It
+resolves the template repository from `%AGENT_WORKFLOW_HOME%` (default `C:\code\agent-workflow`), refuses with exit 2
+when `bin/agent-workflow.mjs` is not there, and runs `init` on the project, exiting with its code. The project is
+the folder the script lives in (`%~dp0`: a project's own copy); the template's copy, run by path, takes
+the current folder instead. Either way the folder must hold `.git/` or `docs/harness/manifest.json`, or the
+launcher refuses with exit 2: a Start-menu, search-result or Win+R launch starts in `C:/Windows/System32`
+(owner's report, 2026-10-26), and `%CD%` alone would have adopted it. When the
+launcher's parent process is `explorer.exe` (a double-click; found through PowerShell's `Win32_Process`,
+two levels up from the PowerShell child) it pauses before exiting, so the window does not close on the
+result; from a terminal or a script it never pauses. It passes extra arguments through (`--dry-run`, `--name`). It does not pull the template repository: a
 line in `ADOPTING.md` says to `git -C C:\code\agent-workflow pull` first on a machine that is not the
 template's origin.
 

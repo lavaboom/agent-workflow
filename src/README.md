@@ -45,5 +45,7 @@ Plain Node ES modules, no dependencies; tests in `tests/` (`node --test`).
 The Stop hook `template/.claude/hooks/usage-log.mjs` is a separate, self-contained script (it ships into
 projects and cannot import from here); its git-root logic mirrors `gitroot.mjs`.
 
-`scripts/fresh-init.cmd` is the Windows launcher for `init` (cli-spec §9): it runs `init --project "%CD%"`
-with any extra arguments, from `%AGENT_WORKFLOW_HOME%` or `C:codeagent-workflow`.
+`template/fresh-init.cmd` is the Windows launcher for `init` (cli-spec §9): it runs `init` on the folder it
+lives in (the template's copy: on the current folder, which must be a project root) with any extra arguments, from `%AGENT_WORKFLOW_HOME%` or `C:\code\agent-workflow`. It is a managed pack file, so every
+adopted project carries a copy; when its parent process is Explorer (a double-click) it waits for a key
+before the window closes.

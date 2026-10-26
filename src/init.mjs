@@ -11,10 +11,9 @@ import { utcTimestamp } from './dates.mjs';
 import { commandResult, refuse, succeed } from './result.mjs';
 import { runSync } from './sync.mjs';
 
-const ADOPT_PATHS = ['AGENTS.md', '.claude', '.agents', '.codex', 'docs', 'ecc-install.json', '.gitignore'];
+const ADOPT_PATHS = ['AGENTS.md', '.claude', '.agents', '.codex', 'docs', 'ecc-install.json', 'fresh-init.cmd', '.gitignore'];
 // Deleted v1 files outside those paths' reach for `git add -A` to stage (named as the spec names them).
 const STAGED_DELETIONS = [V1_IMPORT_FILE, V1_POINTER_FILES[0]];
-const SYNC_PATHS = ['.claude', '.agents', '.codex', 'docs'];
 const SYNC_CHANGES = new Set(['create', 'update', 'overwritten', 'pruned']);
 const GUIDE_STEP = `${GUIDE_PATH} holds the old AGENTS.md: split its rules into .claude/rules/ and docs/, then trim it`;
 
@@ -54,10 +53,11 @@ async function initSync(options) {
   if (errors.length > 0) return refuse({ ...result, ok: false, exitCode: 1, errors: [...sync.errors] }, ...errors, 'the .gitignore merge was not done');
   if (!options.dryRun) await applyGitignoreItems(options.projectDir, gitignoreItems);
   result.items = [...sync.items, ...gitignoreItems];
-  const changed = sync.fromVersion !== sync.version
-    || sync.items.some((item) => SYNC_CHANGES.has(item.action))
-    || gitignoreItems.some((item) => item.action !== 'skip');
-  if (changed) result.gitCommand = syncGitCommand(sync.version);
+  // The exact paths, never a directory: a sync must not sweep the project's own uncommitted work into its commit.
+  const changedPaths = [...sync.items.filter((item) => SYNC_CHANGES.has(item.action)), ...gitignoreItems.filter((item) => item.action !== 'skip')]
+    .map((item) => item.path);
+  const changed = sync.fromVersion !== sync.version || changedPaths.length > 0;
+  if (changed) result.gitCommand = syncGitCommand(sync.version, [...changedPaths, MANIFEST_PATH]);
   return result;
 }
 
@@ -95,6 +95,6 @@ export function adoptGitCommand(version, deletedFiles) {
   return `git add -A -- ${paths} && git commit -m "docs(harness): adopt agent-workflow v${version}"`;
 }
 
-export function syncGitCommand(version) {
-  return `git add -A -- ${SYNC_PATHS.join(' ')} && git commit -m "docs(harness): sync agent-workflow v${version}"`;
+export function syncGitCommand(version, paths) {
+  return `git add -- ${paths.join(' ')} && git commit -m "docs(harness): sync agent-workflow v${version}"`;
 }

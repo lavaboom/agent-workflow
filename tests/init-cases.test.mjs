@@ -23,7 +23,7 @@ describe('init on other projects', () => {
     assert.doesNotMatch(run.stdout, /^filled /m);
     assert.match(await readText(project, 'docs', 'project-guide.md'), /-->\n\n# Demo\n\nWhat Demo is\.\n\n## Rules\n\nBe kind\.\n$/);
     assert.equal((await readText(project, 'AGENTS.md')).split('\n')[0], '# demo');
-    assert.match(run.stdout, /\n {2}git add -A -- AGENTS\.md \.claude \.agents \.codex docs ecc-install\.json \.gitignore && git commit/);
+    assert.match(run.stdout, /\n {2}git add -A -- AGENTS\.md \.claude \.agents \.codex docs ecc-install\.json fresh-init\.cmd \.gitignore && git commit/);
     assert.match(run.stdout, /\n {2}0\. docs\/project-guide\.md holds the old AGENTS\.md/);
   });
 
@@ -59,7 +59,7 @@ describe('init on other projects', () => {
     assert.equal(first.code, 0, first.stderr);
     assert.match(first.stdout, /^update {6}\.gitignore {2}\(added \d+ line\(s\) from \.gitignore\.harness\)$/m);
     assert.match(first.stdout, /^deleted {5}\.gitignore\.harness {2}\(merged into \.gitignore\)$/m);
-    assert.ok(first.stdout.includes(`git add -A -- .claude .agents .codex docs && git commit -m "docs(harness): sync agent-workflow v${PACK.version}"`));
+    assert.ok(first.stdout.includes(`git add -- .gitignore .gitignore.harness docs/harness/manifest.json && git commit -m "docs(harness): sync agent-workflow v${PACK.version}"`));
     assert.equal(await pathExists(nativeIn(project, '.gitignore.harness')), false);
     assert.match(await readText(project, '.gitignore'), /^node_modules\/\n.*\.claude\/settings\.local\.json\n/s);
     const second = await runCli(['init', '--project', project]);
@@ -114,16 +114,19 @@ describe('init help and the launcher', () => {
   it('init --help documents the command', async () => {
     const run = await runNode(BIN, ['init', '--help']);
     assert.equal(run.code, 0);
-    for (const text of ['init     migrate a project', 'docs/project-guide.md', 'docs/harness/init-backup/', 'scripts/fresh-init.cmd']) assert.ok(run.stdout.includes(text), text);
+    for (const text of ['init     migrate a project', 'docs/project-guide.md', 'docs/harness/init-backup/', 'template/fresh-init.cmd']) assert.ok(run.stdout.includes(text), text);
   });
 
-  it('scripts/fresh-init.cmd runs init on the current folder and passes arguments through', async () => {
-    const text = (await readText(REPO_DIR, 'scripts', 'fresh-init.cmd')).replace(/\r\n/g, '\n');
-    assert.equal(text, [
-      '@echo off', 'setlocal', 'set "AW=%AGENT_WORKFLOW_HOME%"', 'if "%AW%"=="" set "AW=C:\\code\\agent-workflow"',
-      'if not exist "%AW%\\bin\\agent-workflow.mjs" (',
-      '  echo agent-workflow was not found at "%AW%". Clone it there or set AGENT_WORKFLOW_HOME.', '  exit /b 2', ')',
-      'node "%AW%\\bin\\agent-workflow.mjs" init --project "%CD%" %*', '',
-    ].join('\n'));
+  it('template/fresh-init.cmd runs init on the current folder, passes arguments through, and pauses only for Explorer', async () => {
+    const lines = (await readText(TEMPLATE, 'fresh-init.cmd')).split('\r\n');
+    assert.ok(lines.length > 10 && lines[0] === '@echo off', 'CRLF, starts with @echo off');
+    assert.ok(lines.includes('if "%AW%"=="" set "AW=C:\\code\\agent-workflow"'));
+    assert.ok(lines.includes('node "%AW%\\bin\\agent-workflow.mjs" init --project "%PROJECT%" %*'));
+    assert.ok(lines.includes('set "PROJECT=%~dp0"'), 'the project is the folder the script lives in');
+    assert.ok(lines.includes('if /i "%PROJECT%"=="%AW%' + String.fromCharCode(92) + 'template" set "PROJECT=%CD%"'), 'the template copy takes the current folder');
+    assert.ok(lines.some((line) => line.includes('is not a project root')), 'refuses a folder without .git or a manifest');
+    assert.ok(lines.includes('if /i "%PARENT%"=="explorer.exe" ('));
+    assert.ok(lines.some((line) => line.includes('Win32_Process')));
+    assert.equal(lines.filter((line) => line.trim() === 'pause').length, 1);
   });
 });

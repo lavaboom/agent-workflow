@@ -15,7 +15,7 @@ its sources: `docs/design/2026-10-26-harness-v2-design.md`.
 |---|---|
 | `template/` | The pack a project receives: `AGENTS.md`, `.claude/` (rules, agents, skills, a hook, settings), `.codex/`, `docs/harness/` (the topic documents), the project-owned starters (roadmap, owner queue, board, ledger, lessons). `template.json` lists every file and whether it is `managed` (kept identical by `sync`) or `owned` (created once, then the project's). |
 | `bin/agent-workflow.mjs` | The CLI: `init` (adopt or sync, with v1 cleanup), `adopt`, `sync`, `check` (lean and freshness checks), `ledger` (the week's numbers), `vendor` (copy single ECC pieces with provenance). Plain Node, no dependencies. |
-| `scripts/fresh-init.cmd` | The one script a project runs: first time adopts, later runs sync. Drop it in a project folder or run it by path. |
+| `template/fresh-init.cmd` | The one script a project runs: first time adopts, later runs sync. Part of the pack, so every adopted project carries its own copy; double-click it in Explorer (the window stays open) or run it from a terminal. |
 | `docs/design/` | The v2 design, with every decision tagged, and the CLI specification. |
 | `ADOPTING.md` | How a new or existing project adopts v2, for Claude Code and Codex, and how a v1 project migrated. |
 
@@ -34,8 +34,8 @@ a week the harness itself is reviewed: numbers, rules, phase, tooling, template 
 
 ```bash
 # a project adopts the pack, or updates it (run from the project root)
-C:codeagent-workflowscriptsresh-init.cmd --dry-run
-C:codeagent-workflowscriptsresh-init.cmd
+C:\code\agent-workflow\template\fresh-init.cmd --dry-run
+C:\code\agent-workflow\template\fresh-init.cmd
 
 # the weekly review's helpers
 node C:/code/agent-workflow/bin/agent-workflow.mjs check

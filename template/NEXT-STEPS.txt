@@ -13,6 +13,6 @@ Adopted. Finish the initialisation in this session, before any feature work:
   7. Run the readiness command from AGENTS.md; fix it before anything else.
   8. <the Harness CLI command from AGENTS.md> check   -> every line ok or warn, none fail.
   9. Commit the harness files on master: git add AGENTS.md .claude .agents .codex docs ecc-install.json
-     && git commit -m "docs(harness): adopt agent-workflow v2"
+     fresh-init.cmd && git commit -m "docs(harness): adopt agent-workflow v2"
  10. Fresh-session test: open a new session with no instructions and ask it the five questions in
      docs/harness/session.md -> The fresh-session test. Fix the file it could not answer from.

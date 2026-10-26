@@ -1,5 +1,12 @@
 # Changelog
 
+## v2.1.1 (2026-10-26)
+
+The launcher moves into the pack as `template/fresh-init.cmd` (managed): every adopted project carries its
+own copy, `sync` keeps it current, and double-clicked in Explorer it keeps its window open until a key is
+pressed. The sync git command stages the exact changed paths and the manifest instead of whole directories.
+`.cmd` files are checked out with CRLF.
+
 ## v2.1.0 (2026-10-26)
 
 `init` and `scripts/fresh-init.cmd`: one idempotent entry point that adopts a project the first time (with

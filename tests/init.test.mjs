@@ -9,7 +9,7 @@ import { V1_FILES, makeV1Project, snapshot } from './helpers/v1-project.mjs';
 
 const TEMPLATE = path.join(REPO_DIR, 'template');
 const PACK = await readJson(path.join(TEMPLATE, 'template.json'));
-const GIT_ADD = 'git add -A -- AGENTS.md .claude .agents .codex docs ecc-install.json .gitignore';
+const GIT_ADD = 'git add -A -- AGENTS.md .claude .agents .codex docs ecc-install.json fresh-init.cmd .gitignore';
 
 after(removeTempDirs);
 
