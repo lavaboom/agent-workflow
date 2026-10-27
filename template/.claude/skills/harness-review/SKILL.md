@@ -27,8 +27,9 @@ or a dated "keep".
    month (keep them under a "Retired" heading with the date).
 3. **Rules.** Run `<Harness CLI> check`. For every `warn` or `fail`, act.
    Then read each always-on rule (`.claude/rules/*.md` without `paths:`, and `AGENTS.md` → Hard
-   constraints) and ask the two questions from `maintenance.md` step 3. Move, delete, or renew the
-   `review-by` date, in that order of preference.
+   constraints) and ask the two questions from `maintenance.md` step 3, with the `Named in fix notes:` line
+   of step 1 beside you: a file named often is sharpened or becomes a check; one never named and never
+   needed is moved. Move, delete, or renew the `review-by` date, in that order of preference.
 4. **Phase.** Compare `AGENTS.md` → Phase with `.claude/rules/phase-*.md`. Retire or add as the phase says.
    A phase change is the owner's call; ask once if it looks due.
 5. **Tooling.** List `ecc-install.json` includes, `.mcp.json` servers, enabled plugins. For each, one line:
@@ -39,8 +40,9 @@ or a dated "keep".
    owner has not asked to hold; resolve conflicts as `maintenance.md` says.
 7. **Fresh-session test** (monthly, or after a large docs change): ask a fresh session the five questions;
    fix the file behind each miss.
-8. **Ablation** (monthly): pick one component to disable for the coming week, say why, and note it; next
-   review reads the result.
+8. **Ablation** (monthly: when no entry of the last four weeks names one): pick one component to disable
+   for the coming week (`maintenance.md` step 8 says how, without deleting), say why, and note it with the
+   date it comes back; the next review past that date reads the ledger and decides.
 9. **The entry.** Append to `docs/harness/review-log.md`:
 
    ```

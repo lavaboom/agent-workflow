@@ -64,22 +64,28 @@ session writes its own rows):
 | date | task | step | role | tool | model | effort | tier | round | outcome | layer | note |
 ```
 
+- `task`: the id the row is about: `task-NNN`; a group names its lead task; a project id that is not a task
+  folder (a roadmap item) is accepted as written.
 - `step`: `build`, `review`, `fix` (a builder resumed with findings), `close` (the task closed after its merge).
 - `round`: 1 for the first build and the first review; a `fix` row and its re-review carry the round number.
 - `outcome`: on a `build` or `fix` row `built` (the builder reported finished work), `blocked` or
   `abandoned`; on a `review` row `approve`, `fix` (findings returned) or `escalated` (the next build goes
-  to a stronger model); on a `close` row `done`. A `close` row carries the role, model, effort and tier of the review it closes.
+  to a stronger model); on a `close` row `done`. A `close` row has role `manager` and the model, effort and tier
+  of the review it closes.
 - `layer` (on `fix`, `escalated` and `blocked`; else `none`), the harness layer that failed, from lecture 1 of
   the harness course: `spec` (the plan left a choice or a fact out), `context` (the agent lacked a doc or
   a decision it needed), `environment` (install, services, ports), `verification` (the checks did not catch
   it, or evidence was wrong), `state` (handoff or status drift), `capability` (the model could not do it
   with everything in place).
-- `note`: a few words; the finding's `what` for a `fix`.
+- A line under `## Rows` that is not a table row is prose and is ignored; keep notes in the `note` column.
+- `note`: a few words; the finding's `what` for a `fix`, and the harness file behind it when there is one
+  (`core.md`, `verification.md`, `AGENTS.md#5`, `lessons.md`): `ledger` counts those names, so the weekly
+  review sees which rule or document the week's fixes kept pointing at.
 
 `<Harness CLI> ledger` (the CLI from the template repository) prints the week: Sonnet share, first-pass
 approval per model, fix rounds per model and tier, escalations, failure layers, overkill candidates (Opus
-builds approved first pass on `docs`, `static` or `unit`), and this machine's token usage per model from
-the usage log. The weekly review (`maintenance.md`) reads it and moves the ladder.
+builds approved first pass on `docs`, `static` or `unit`), the harness files named in the week's fix notes,
+and this machine's token usage per model from the usage log. The weekly review (`maintenance.md`) reads it and moves the ladder.
 
 ## Lessons
 

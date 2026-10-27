@@ -7,7 +7,7 @@ export const LEDGER_COLUMNS = ['date', 'task', 'step', 'role', 'tool', 'model', 
 
 export const LEDGER_ENUMS = {
   step: ['build', 'review', 'fix', 'close'],
-  role: ['builder', 'reviewer', 'explorer'],
+  role: ['builder', 'reviewer', 'explorer', 'manager'],
   tool: ['claude', 'codex'],
   effort: ['low', 'medium', 'high', 'xhigh', 'max'],
   tier: ['docs', 'static', 'unit', 'integration', 'e2e'],
@@ -27,7 +27,8 @@ const ROWS_HEADING = /^##\s+Rows\s*$/;
 const ANY_HEADING = /^#{1,6}\s/;
 
 // Returns { ok, rows, errors } where errors are { line, message } with 1-based line numbers.
-// Blank lines, the alignment row and HTML comments are ignored; every other line in the section is a row.
+// Blank lines, the alignment row, HTML comments and prose (a line not starting with |, such as a note a
+// session left under the rows) are ignored; every line starting with | is a row.
 export function parseLedger(text) {
   const lines = splitLines(text);
   const start = lines.findIndex((line) => ROWS_HEADING.test(line.trim()));
@@ -48,7 +49,7 @@ export function parseLedger(text) {
       inComment = !trimmed.includes('-->');
       continue;
     }
-    if (trimmed === '') continue;
+    if (trimmed === '' || !trimmed.startsWith('|')) continue;
     const cells = splitRow(trimmed);
     if (!headerSeen) {
       headerSeen = true;
@@ -90,7 +91,8 @@ export function parseRow(cells, lineNumber) {
   const raw = Object.fromEntries(LEDGER_COLUMNS.map((name, i) => [name, cells[i]]));
   const problems = [];
   if (!isIsoDate(raw.date)) problems.push(`date "${raw.date}" is not an ISO date`);
-  if (!/^task-\d+$/.test(raw.task)) problems.push(`task "${raw.task}" is not task-NNN`);
+  // Any id the project uses: task-NNN, a group's lead task, or a roadmap item such as P2.1 (a Codex project).
+  if (raw.task === '') problems.push('task is empty');
   if (raw.model === '') problems.push('model is empty');
   if (!/^\d+$/.test(raw.round) || Number(raw.round) < 1) problems.push(`round "${raw.round}" is not a positive integer`);
   const row = { line: lineNumber, ...raw, round: Number(raw.round) };

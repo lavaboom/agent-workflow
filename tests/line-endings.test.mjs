@@ -13,9 +13,9 @@ const OTHER = { lf: 'crlf', crlf: 'lf' };
 const PACK_PATHS = [
   'AGENTS.md', '.claude/rules/core.md', '.claude/rules/tasks.md', '.claude/skills/manager/SKILL.md',
   '.agents/skills/manager/SKILL.md', 'docs/harness/README.md', 'docs/harness/building.md',
-  'docs/harness/ledger.md', 'docs/manager/board.md',
+  'docs/harness/ledger.md', 'docs/harness/review-log.md', 'docs/manager/board.md',
 ];
-const MANAGED = PACK_PATHS.filter((p) => !['AGENTS.md', 'docs/harness/ledger.md', 'docs/manager/board.md'].includes(p));
+const MANAGED = PACK_PATHS.filter((p) => !['AGENTS.md', 'docs/harness/ledger.md', 'docs/harness/review-log.md', 'docs/manager/board.md'].includes(p));
 
 function assertNoProblems(run) {
   assert.equal(run.code, 0, run.stdout + run.stderr);

@@ -27,7 +27,9 @@ file or a diff.
 
 1. Read `docs/manager/board.md` (its `Next step:` and `Current issues:` first), the In progress section of
    `docs/ROADMAP.md`, the open `Q-` headings of `docs/OWNER_QUEUE.md`
-   (`grep -n "^### Q-" docs/OWNER_QUEUE.md`), and `docs/harness/lessons.md` when a plan is coming.
+   (`grep -n "^### Q-" docs/OWNER_QUEUE.md`), and `docs/harness/lessons.md` when a plan is coming. Read the
+   date of the newest `## ` entry in `docs/harness/review-log.md`: seven or more days old means the weekly
+   harness review is due (`<Harness CLI> check` says the same as `review-due`).
 2. Run the capacity command (Workflow settings) when the project has one (two notes, owner, 2026-10-22:
    from PowerShell, quote the `--` that passes flags through to a script, or PowerShell drops it; and the
    main checkout needs the install step of "Prepare a worktree" run once before the capacity command runs
@@ -50,7 +52,7 @@ file or a diff.
 | "continue", "go", "next", "pick up task-NNN" | Run the queue (a named task goes first) |
 | "how does X work" | Dispatch `explorer` (Haiku for a lookup, Sonnet for an explanation); answer from its conclusion with file links. Open nothing yourself. |
 | An answer to a question you asked | Record it where it belongs (brief, spec, `Q-` item), unblock, continue |
-| "review the harness", or it is the weekly day | `/harness-review` |
+| "review the harness", or the review is due (step 1 of every turn) | `/harness-review`. Due with `Autopilot: on` and nothing Running: run it before the queue. Due otherwise: say so in the status brief and ask once per tab; run it on the yes. |
 | "pause", "stop" | `Autopilot: off` on the board; let running subagents finish and record them |
 
 ## Intake: from a wish to an approved brief
@@ -150,6 +152,7 @@ Blocked: task-NNN on Q-NNN (<what>)
 Needs you: <one line each, or "nothing">
 This week: sonnet 7/10 builds, first pass 71 % · opus 3/10, first pass 100 % · 1 escalation   (from the ledger)
 Capacity: <free RAM, branch databases, worktrees> · plan 62 % of 5 h (resets 16:10 UTC) · context 34 % · autopilot on
+Harness review: last 2026-10-26, due 2026-11-02   (or: due since 2026-11-02, run it? — asked once per tab)
 Biggest obstacle: <one line>
 ```
 
@@ -167,6 +170,7 @@ Biggest obstacle: <one line>
 | "A Fable subagent would build this better" | Fable is this tab only. Builders are Sonnet or Opus, reviewers Sonnet or Opus, with `model` and `effort` passed. |
 | "The batch is only testing, a quick claim commit won't hurt" | Nothing is committed on master while a merge batch runs (owner, 2026-10-22). |
 | "I'll add the ledger rows at the end of the day" | One row when the report arrives; the next tab has no memory of today. |
+| "The review can wait until the owner asks" | It is due when the log's newest entry is a week old; the status brief says so and the tab asks once. |
 
 ## Tool notes
 

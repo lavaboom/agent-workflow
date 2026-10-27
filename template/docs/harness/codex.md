@@ -45,6 +45,9 @@ Codex with target `codex` (user level) or copied into `.agents/skills/` by hand;
   (`task-flow.md` → Small tasks) or under `For the roadmap:` in `status.md`, and mentioned in the final
   response. It is not added to the roadmap unless the owner says so.
 - A Codex session that builds or reviews writes its own ledger rows (`model-policy.md`) with `tool: codex`.
+- A Codex session acting as the manager reads the newest `## ` date in `docs/harness/review-log.md` at the
+  start (or runs `<Harness CLI> check` → `review-due`): seven or more days old means the weekly review is
+  due; run the `harness-review` skill before new dispatches, or ask the owner once.
 - Worktrees: the Worktrees setting, not Codex's own location (`places.md`). A Codex builder session is
   opened in the task's worktree, and `workspace-write` must be allowed to reach the main checkout's `.git`
   (a linked worktree commits through it) and the worktrees folder: in the user or project config,

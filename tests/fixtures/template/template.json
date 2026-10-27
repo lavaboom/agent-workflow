@@ -9,6 +9,7 @@
     { "path": "docs/harness/README.md", "policy": "managed" },
     { "path": "docs/harness/building.md", "policy": "managed" },
     { "path": "docs/harness/ledger.md", "policy": "owned" },
+    { "path": "docs/harness/review-log.md", "policy": "owned" },
     { "path": "docs/manager/board.md", "policy": "owned" }
   ]
 }

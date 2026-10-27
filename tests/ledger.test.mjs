@@ -24,6 +24,7 @@ const WINDOW_LINES = [
   'Escalations:          1 (task-004)',
   'Failure layers (fix): spec 1  context 1  verification 1  environment 0  state 0  capability 0',
   'Overkill candidates:  2 opus/sol builds approved first pass on docs/static/unit: task-003, task-006',
+  'Named in fix notes:   none',
 ];
 
 describe('ledger', () => {
@@ -73,7 +74,31 @@ describe('ledger', () => {
       'Escalations:          0',
       'Failure layers (fix): spec 0  context 0  verification 0  environment 0  state 0  capability 0',
       'Overkill candidates:  0 opus builds approved first pass on docs/static/unit',
+      'Named in fix notes:   none',
     ]);
+  });
+
+  it('names the harness files in fix and escalation notes, one name per file', async () => {
+    const project = await makeProject();
+    const row = (date, step, outcome, note) => `| ${date} | task-001 | ${step} | reviewer | claude | opus | high | unit | 1 | ${outcome} | none | ${note} |`;
+    await writeText(nativeIn(project, 'docs/harness/ledger.md'), [
+      '## Rows', '',
+      '| date | task | step | role | tool | model | effort | tier | round | outcome | layer | note |',
+      '|---|---|---|---|---|---|---|---|---|---|---|---|',
+      row('2026-10-20', 'build', 'built', 'core.md is not counted on a build'),
+      row('2026-10-20', 'review', 'fix', 'core.md skipped; see .claude/rules/core.md'),
+      row('2026-10-21', 'fix', 'built', 'read docs/harness/verification.md and AGENTS.md#5'),
+      row('2026-10-22', 'review', 'escalated', 'core.md again'),
+      row('2026-10-22', 'review', 'approve', 'verification.md is not counted on an approval'),
+      row('2026-10-01', 'review', 'fix', 'core.md before the window'),
+      row('2026-10-23', 'fix', 'built', 'not names: https://x.com/a/b.md, core.mdx, /tmp/core.md'),
+      '',
+    ].join('\r\n'));
+    const run = await runCli(['ledger', '--project', project]);
+    assert.equal(run.code, 0, run.stderr);
+    assert.equal(run.stdout.trimEnd().split('\n')[7], 'Named in fix notes:   core.md 2  AGENTS.md#5 1  verification.md 1');
+    const { summary } = JSON.parse((await runCli(['ledger', '--project', project, '--json'])).stdout);
+    assert.deepEqual(summary.noteMentions, [{ name: 'core.md', count: 2 }, { name: 'AGENTS.md#5', count: 1 }, { name: 'verification.md', count: 1 }]);
   });
 
   it('exits 1 on a malformed row but still summarises the good rows', async () => {
@@ -115,8 +140,8 @@ describe('ledger', () => {
     const run = await runCli(['ledger', '--project', project, '--usage'], { env: { CLAUDE_CONFIG_DIR: claudeDir } });
     assert.equal(run.code, 0, run.stderr);
     const lines = run.stdout.trimEnd().split('\n');
-    assert.equal(lines.length, 8);
-    assert.equal(lines[7], 'Usage (this machine): opus 1M in / 500 out · sonnet 2.3k in / 20 out · haiku 9k in / 9k out  (2 sessions)');
+    assert.equal(lines.length, 9);
+    assert.equal(lines[8], 'Usage (this machine): opus 1M in / 500 out · sonnet 2.3k in / 20 out · haiku 9k in / 9k out  (2 sessions)');
   });
 
   it('--usage says so when there is no usage log', async () => {
@@ -130,6 +155,20 @@ describe('ledger', () => {
 
 describe('parseLedger', () => {
   const header = '## Rows\n| date | task | step | role | tool | model | effort | tier | round | outcome | layer | note |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n';
+
+  it('accepts the manager as a role and any non-empty task id, as the first real rows did', () => {
+    const rows = [
+      '| 2026-10-27 | task-478 | close | manager | claude | opus | high | unit | 1 | done | none | merged 700c5dc2 |',
+      '| 2026-10-27 | group BS (task-473, task-474) | review | reviewer | claude | opus | xhigh | integration | 1 | approve | none | whole branch |',
+      'A note a session left between the rows is not a row.',
+      '| 2026-10-27 | P2.1 | build | builder | codex | sol | xhigh | e2e | 2 | built | none | a roadmap item of a Codex project |',
+    ];
+    const parsed = parseLedger(`${header}${rows.join('\n')}\n`);
+    assert.equal(parsed.ok, true, JSON.stringify(parsed.errors));
+    assert.deepEqual(parsed.rows.map((row) => row.task), ['task-478', 'group BS (task-473, task-474)', 'P2.1']);
+    const empty = parseLedger(`${header}| 2026-10-27 |  | build | builder | claude | sonnet | low | docs | 1 | built | none | |\n`);
+    assert.match(empty.errors[0].message, /task is empty/);
+  });
 
   it('parses a row, trimming cells and lower-casing enums', () => {
     const parsed = parseLedger(`${header}|  2026-10-20 | task-001 | Build | builder | claude | Sonnet | high | docs | 1 | built | none | a note |\n`);

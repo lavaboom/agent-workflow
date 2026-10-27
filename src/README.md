@@ -21,12 +21,12 @@ Plain Node ES modules, no dependencies; tests in `tests/` (`node --test`).
 | `sync.mjs` | `sync`: plan and apply managed updates, owned creates, retired and pruned files |
 | `sync-decide.mjs` | Pure decisions for `sync` (managed file, conflict resolution, retired file) |
 | `check.mjs` | `check`: run project or template checks, count levels, set the exit code |
-| `check-project.mjs` | Project checks: entry size, always-on rules, metadata, review-by, drift, board, ledger, CLAUDE.md |
+| `check-project.mjs` | Project checks: entry size, always-on rules, metadata, review-by, review-due (the weekly review), drift, board, ledger, CLAUDE.md |
 | `check-template.mjs` | Template checks: listing vs disk, placeholders, `from` targets, entry size, metadata |
 | `doc-checks.mjs` | Which files are rules and topic docs; findings shared by both check modes |
 | `headers.mjs` | Read a doc's header block (frontmatter, leading HTML comments): `paths:`, `source:`, `applies:`, `review-by:` |
 | `ledger.mjs` | `ledger`: read the ledger (and usage log), pick the window, produce the summary |
-| `ledger-stats.mjs` | Pure ledger statistics: builds, first-pass approval, fix rounds, escalations, layers, overkill |
+| `ledger-stats.mjs` | Pure ledger statistics: builds, first-pass approval, fix rounds, escalations, layers, overkill, files named in fix notes |
 | `ledger-format.mjs` | The summary's text lines, as in the spec's example |
 | `table.mjs` | Parse and validate the `## Rows` table of `docs/harness/ledger.md` |
 | `usage.mjs` | Read `<claude dir>/metrics/usage.jsonl`, keep the last row per session, format token counts |

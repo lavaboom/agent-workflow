@@ -14,6 +14,7 @@ export function formatLedgerSummary(summary, usage) {
     labelled('Escalations:', escalationsText(summary.escalations)),
     labelled('Failure layers (fix):', FAILURE_LAYERS.map((layer) => `${layer} ${summary.failureLayers[layer]}`).join('  ')),
     labelled('Overkill candidates:', overkillText(summary.overkill)),
+    labelled('Named in fix notes:', mentionsText(summary.noteMentions)),
   ];
   if (usage !== null) lines.push(labelled('Usage (this machine):', usageText(usage)));
   return lines;
@@ -57,6 +58,10 @@ function overkillText(overkill) {
   const label = overkill.models.some((model) => /\bsol\b/i.test(model)) ? 'opus/sol' : 'opus';
   const head = `${overkill.count} ${label} builds approved first pass on docs/static/unit`;
   return overkill.count === 0 ? head : `${head}: ${overkill.tasks.join(', ')}`;
+}
+
+function mentionsText(mentions) {
+  return mentions.length === 0 ? 'none' : mentions.map((item) => `${item.name} ${item.count}`).join('  ');
 }
 
 function usageText(usage) {

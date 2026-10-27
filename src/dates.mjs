@@ -20,3 +20,8 @@ export function addDays(isoDate, days) {
   date.setUTCDate(date.getUTCDate() + days);
   return utcDateString(date);
 }
+
+// Whole days from one ISO date to a later one (negative when `to` is earlier).
+export function daysBetween(fromIsoDate, toIsoDate) {
+  return Math.round((Date.parse(`${toIsoDate}T00:00:00Z`) - Date.parse(`${fromIsoDate}T00:00:00Z`)) / 86400000);
+}

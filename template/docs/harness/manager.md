@@ -69,3 +69,13 @@ The manager hands off at 60 % context: write the board (`Next step:` with the re
 push as "Who pushes" says, then `/clear` and `/manager`. A clear kills live subagents, so never while a
 Running row has one. A turn that fails on a usage limit loses nothing on disk; after the reset the owner
 sends `/manager` and the reconcile step turns orphaned Running rows into resumes.
+
+## The weekly review
+
+The harness review (`maintenance.md`; the checklist is `/harness-review`) is due when the newest entry in
+`docs/harness/review-log.md` is seven or more days old. Two things say so: `<Harness CLI> check`
+(`review-due`), and the manager, which reads that date at the start of every turn and puts a
+`Harness review:` line in the status brief. With `Autopilot: on` and nothing Running, the manager runs the
+review before the queue; otherwise it asks the owner once per tab and runs it on the yes. The review's
+changes come back as the review entry and its commit; the owner is asked only for what is theirs (a phase
+change, a ladder override, a tool they asked for).

@@ -36,10 +36,11 @@ describe('check (project)', () => {
     const run = await check(project);
     assert.equal(run.code, 0, run.stdout);
     assert.doesNotMatch(run.stdout, /^(warn|fail) /m);
-    for (const name of ['entry-size', 'always-on-rules', 'rule-metadata', 'review-by', 'manifest-drift', 'vendored-drift', 'board-lines', 'ledger-shape', 'no-claude-md']) {
+    for (const name of ['entry-size', 'always-on-rules', 'rule-metadata', 'review-by', 'review-due', 'manifest-drift', 'vendored-drift', 'board-lines', 'ledger-shape', 'no-claude-md']) {
       assert.match(run.stdout, new RegExp(`^ok {4}${name}: `, 'm'), name);
     }
-    assert.match(run.stdout, /^project checks: 9 ok, 0 warn, 0 fail$/m);
+    assert.match(run.stdout, /^project checks: 10 ok, 0 warn, 0 fail$/m);
+    assert.match(run.stdout, /^ok {4}review-due: last harness review 2026-10-26, 0 days ago$/m);
   });
 
   it('passes with CRLF, and with LF, line endings everywhere', async () => {
@@ -93,6 +94,32 @@ describe('check (project)', () => {
     const run = await check(project);
     assert.equal(run.code, 0);
     assert.match(run.stdout, /^warn {2}review-by: docs\/harness\/old\.md review-by 2020-01-01 is past$/m);
+  });
+
+  it('warns when the newest review-log entry is 7 days old, and not at 6', async () => {
+    const project = await adoptedProject();
+    const log = nativeIn(project, 'docs/harness/review-log.md');
+    await writeText(log, '﻿# Harness review log\r\n\r\n## 2026-10-12\r\n\r\nOlder.\r\n\r\n## 2026-10-19\r\n\r\nNewest.\r\n\r\n## 2026-13-40\r\n');
+    const due = await check(project);
+    assert.equal(due.code, 0);
+    assert.match(due.stdout, /^warn {2}review-due: last harness review 2026-10-19, 7 days ago; weekly review due$/m);
+    await writeText(log, '# Harness review log\n\n## 2026-10-20\n');
+    assert.match((await check(project)).stdout, /^ok {4}review-due: last harness review 2026-10-20, 6 days ago$/m);
+    await writeText(log, '# Harness review log\n\n## 2026-11-02\n');
+    assert.match((await check(project)).stdout, /^warn {2}review-due: last harness review 2026-11-02 is in the future$/m);
+  });
+
+  it('warns on a review log with no dated entry, and fails when it is missing', async () => {
+    const project = await adoptedProject();
+    const log = nativeIn(project, 'docs/harness/review-log.md');
+    await writeText(log, '# Harness review log\n\n## {{DATE}}\n\n## Week of 2026-10-20\n');
+    const undated = await check(project);
+    assert.equal(undated.code, 0);
+    assert.match(undated.stdout, /^warn {2}review-due: docs\/harness\/review-log\.md has no dated entry \(## YYYY-MM-DD\)$/m);
+    await rm(log);
+    const missing = await check(project);
+    assert.equal(missing.code, 1);
+    assert.match(missing.stdout, /^fail {2}review-due: docs\/harness\/review-log\.md missing$/m);
   });
 
   it('warns on missing metadata, too many always-on rules and a long always-on rule', async () => {
@@ -170,6 +197,7 @@ describe('check --template-only', () => {
     assert.equal(run.code, 0, run.stdout);
     assert.doesNotMatch(run.stdout, /^(warn|fail) /m);
     assert.doesNotMatch(run.stdout, /template\.json is in template|NEXT-STEPS\.txt is in template/);
+    assert.doesNotMatch(run.stdout, /review-due/);
   });
 
   it('fails on an unlisted file and on a listed file that is absent', async () => {

@@ -5,6 +5,10 @@ export const TIERS = ['docs', 'static', 'unit', 'integration', 'e2e'];
 export const FAILURE_LAYERS = ['spec', 'context', 'verification', 'environment', 'state', 'capability'];
 const OVERKILL_TIERS = new Set(['docs', 'static', 'unit']);
 const OVERKILL_MODEL = /\b(opus|sol)\b/i;
+// A file name stands alone: not inside a URL or a longer word (`core.mdx`), a sentence period allowed after it.
+const HARNESS_FILE = /(?<![\w/.:-])(?:\.?[\w-]+\/)*[\w-]+\.md(?:#[\w-]+)?(?![\w/-]|\.\w)/g;
+// The match never starts at the dot of `.claude`, so that prefix is stripped with or without it.
+const HARNESS_PREFIX = /^(?:\.?claude\/rules\/|docs\/harness\/)/;
 
 // window: { since, until, all }. since/until are ISO dates, inclusive.
 export function summarizeLedger(rows, window) {
@@ -25,6 +29,7 @@ export function summarizeLedger(rows, window) {
     escalations: escalations(windowRows),
     failureLayers: failureLayers(windowRows),
     overkill: overkillCandidates(builtTasks),
+    noteMentions: noteMentions(windowRows),
   };
 }
 
@@ -126,6 +131,20 @@ function failureLayers(windowRows) {
 function overkillCandidates(tasks) {
   const candidates = tasks.filter((task) => OVERKILL_MODEL.test(task.model) && OVERKILL_TIERS.has(task.tier) && task.firstReviewOutcome === 'approve');
   return { count: candidates.length, tasks: candidates.map((task) => task.task), models: [...new Set(candidates.map((task) => task.model))] };
+}
+
+// Harness files named in the notes of rows about a fix: a review that sent the work back or escalated it,
+// and the fix rows themselves. `.claude/rules/core.md` and `core.md` count as one name; a row counts a name once.
+export function noteMentions(windowRows) {
+  const names = [];
+  for (const row of windowRows) {
+    const aboutFix = row.step === 'fix' || (row.step === 'review' && (row.outcome === 'fix' || row.outcome === 'escalated'));
+    if (!aboutFix) continue;
+    names.push(...new Set((row.note.match(HARNESS_FILE) ?? []).map((token) => token.replace(HARNESS_PREFIX, ''))));
+  }
+  const counts = countBy(names, (name) => name);
+  return [...counts.entries()].map(([name, count]) => ({ name, count }))
+    .sort((a, b) => b.count - a.count || (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
 }
 
 function countBy(items, keyOf) {

@@ -1,12 +1,14 @@
-// Project checks for `check`: lean entry file and rules, metadata freshness, manifest drift, board and ledger.
+// Project checks for `check`: lean entry file and rules, metadata freshness, the weekly review, manifest drift,
+// board and ledger.
 import path from 'node:path';
+import { daysBetween, isIsoDate } from './dates.mjs';
 import { contentHash } from './hash.mjs';
 import { listFilesRecursive, nativePath, readBytesIfExists, readTextIfExists } from './files.mjs';
 import { readHeader } from './headers.mjs';
 import { readManifest, MANIFEST_PATH } from './manifest.mjs';
 import { loadPack } from './pack.mjs';
 import { LEDGER_PATH, parseLedger } from './table.mjs';
-import { countLines } from './text.mjs';
+import { countLines, splitLines } from './text.mjs';
 import { compareVersions } from './versions.mjs';
 import { vendoredFiles } from './vendor.mjs';
 import {
@@ -14,6 +16,9 @@ import {
 } from './doc-checks.mjs';
 
 export const BOARD_PATH = 'docs/manager/board.md';
+export const REVIEW_LOG_PATH = 'docs/harness/review-log.md';
+const REVIEW_DUE_DAYS = 7;
+const DATED_HEADING = /^##\s+(\d{4}-\d{2}-\d{2})\s*$/;
 const MAX_ALWAYS_ON_RULES = 4;
 const MAX_ALWAYS_ON_LINES = 60;
 
@@ -26,6 +31,7 @@ export async function runProjectChecks({ projectDir, templateDir, today }) {
     ...alwaysOnRuleFindings(docs.filter((doc) => isRulePath(doc.path))),
     ...metadataFindings(docs, 'warn'),
     ...reviewByFindings(docs, today),
+    ...reviewDueFindings(await readTextIfExists(nativePath(projectDir, REVIEW_LOG_PATH)), today),
     ...await manifestDriftFindings(projectDir, templateDir, manifest),
     ...await vendoredDriftFindings(projectDir, manifest),
     ...boardLineFindings(await readTextIfExists(nativePath(projectDir, BOARD_PATH))),
@@ -100,6 +106,28 @@ async function versionFindings(projectVersion, templateDir) {
     return [finding('manifest-drift', 'warn', `update available: ${projectVersion} → ${pack.version}`)];
   }
   return [];
+}
+
+// The weekly harness review: the newest `## YYYY-MM-DD` entry in the review log, at most a week old.
+// Project mode only: the template's review log holds {{DATE}} until adoption fills it in.
+export function reviewDueFindings(text, today) {
+  if (text === null) return [finding('review-due', 'fail', `${REVIEW_LOG_PATH} missing`)];
+  const newest = newestReviewDate(text);
+  if (newest === null) return [finding('review-due', 'warn', `${REVIEW_LOG_PATH} has no dated entry (## YYYY-MM-DD)`)];
+  const days = daysBetween(newest, today);
+  if (days < 0) return [finding('review-due', 'warn', `last harness review ${newest} is in the future`)];
+  if (days >= REVIEW_DUE_DAYS) return [finding('review-due', 'warn', `last harness review ${newest}, ${days} days ago; weekly review due`)];
+  return [finding('review-due', 'ok', `last harness review ${newest}, ${days} days ago`)];
+}
+
+// The latest valid ISO date among the `## YYYY-MM-DD` headings, or null when there is none.
+export function newestReviewDate(text) {
+  let newest = null;
+  for (const line of splitLines(text)) {
+    const match = DATED_HEADING.exec(line.trim());
+    if (match && isIsoDate(match[1]) && (newest === null || match[1] > newest)) newest = match[1];
+  }
+  return newest;
 }
 
 export function boardLineFindings(text) {

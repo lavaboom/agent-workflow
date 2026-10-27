@@ -8,7 +8,9 @@ review-by: 2027-01-31
 
 A harness rots like code: rules pile up, each one reasonable, until the signal drowns. This document is the
 routine that keeps it small and current. The review is run once a week by the manager (`/harness-review`)
-or by a Codex session, and takes a short session.
+or by a Codex session, and takes a short session. It is due when the newest entry in `review-log.md` is
+seven or more days old: `<Harness CLI> check` reports `review-due`, and the manager reads the same date at
+the start of every turn and runs the review or asks (`manager.md` → The weekly review).
 
 ## What every rule and topic document carries
 
@@ -38,7 +40,10 @@ keep (new date), move (to a topic document, loaded on demand), or delete.
    always-on rules, missing metadata, past `review-by`, drift from the template, the board's mandatory
    lines. For each always-on rule, ask: did any dispatch this week need it? Would removing it change a
    decision? If not, move it to a topic document or delete it. A rule added this week because of one
-   incident is suspect: a check (lint, test, path-scoped rule) usually beats a sentence.
+   incident is suspect: a check (lint, test, path-scoped rule) usually beats a sentence. The `Named in fix
+   notes:` line of `ledger` says which rules and documents the week's fixes pointed at (the `note` column
+   names them, `model-policy.md` → The ledger): a file named often is sharpened or turned into a check; a
+   rule never named and never needed is moved.
 4. **The phase.** `AGENTS.md` → Workflow settings → Phase. A phase change retires the matching
    `.claude/rules/phase-*.md` and may add the next one (launch brings the public-text review, security and
    data-retention rules; maintenance brings dependency and backup checks).
@@ -53,7 +58,11 @@ keep (new date), move (to a topic document, loaded on demand), or delete.
 7. **The fresh-session test** (`session.md`), once a month, or after a large change to the docs.
 8. **Ablation**, once a month: pick one harness component (a rule, a hook, a skill, an installed ECC piece),
    disable it for a week, and read the ledger. No change: remove it. Worse numbers: restore it or replace it
-   with something lighter.
+   with something lighter. Disable without deleting: a rule file gets the suffix `.off` (`core.md.off` is not
+   loaded), a hook comes out of `.claude/settings.json`, a skill folder gets `.off`, an ECC piece comes out
+   of `ecc-install.json`; the entry's `Ablation:` line names the component and the date it comes back, and
+   the next review whose date is past that decides. The manager proposes the component in the review; it is
+   not automatic beyond that.
 9. **The entry.** Append to `review-log.md`: date, the numbers in one line, what was removed, added,
    emphasised, moved; the ladder change if any; the ablation running, if any.
 

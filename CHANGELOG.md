@@ -1,5 +1,14 @@
 # Changelog
 
+## v2.1.2 (2026-10-27)
+
+The weekly review now prompts itself: `check` reports `review-due` when the newest `review-log.md` entry is
+seven days old, and the manager reads that date every turn, shows it in the status brief, runs the review
+under Autopilot or asks once per tab. Ledger fix notes name the harness file behind a finding, and `ledger`
+counts those names (`Named in fix notes:`). The ablation step says how to disable a component without
+deleting it. The ledger parser accepts what the first week of real rows used: role `manager` on close rows
+and any non-empty task id (a group's lead task, a Codex project's roadmap item).
+
 ## v2.1.1 (2026-10-26)
 
 The launcher moves into the pack as `template/fresh-init.cmd` (managed): every adopted project carries its

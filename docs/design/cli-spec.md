@@ -184,7 +184,11 @@ The project's `.claude/settings.json` registers it:
 | date | task | step | role | tool | model | effort | tier | round | outcome | layer | note |
 ```
 
-Values: `date` ISO date; `task` `task-NNN`; `step` build/review/fix; `role` builder/reviewer/explorer;
+Values: `date` ISO date; `task` any non-empty id (revised 2026-10-27: `task-NNN`, a group's lead task, or a
+project id such as `P2.1`; the first week of real rows used all three); `step` build/review/fix/close; `role`
+builder/reviewer/explorer/manager (revised 2026-10-27: the manager writes `close` rows as itself); a line in the
+Rows section that does not start with `|` is prose and is skipped (revised 2026-10-27: a Codex session left a
+note under its rows);
 `tool` claude/codex; `model` free text (sonnet, opus, haiku, luna, sol, …); `effort`
 low/medium/high/xhigh/max; `tier` docs/static/unit/integration/e2e; `round` integer (1 for the first
 build and first review); `outcome` approve/fix/escalated/blocked/abandoned/done; `layer`
@@ -270,6 +274,21 @@ Git's `autocrlf` gives the same file CRLF on Windows and LF on Linux, so a manif
 report false drift on the other. Every sha256 the CLI records or compares (`manifest.files`, `vendored`)
 is computed over the file's bytes with `\r\n` normalised to `\n` first. Writes still copy the template's
 bytes unchanged.
+
+## 10. Addendum (owner, 2026-10-27): `review-due` and `Named in fix notes:`
+
+The weekly review had no trigger (the manager skill said "or it is the weekly day" and nothing read a date).
+Two additions:
+
+- `check`, project mode only, `review-due`: the newest `## YYYY-MM-DD` heading in `docs/harness/review-log.md`.
+  Missing file → `fail`; no dated heading → `warn` (`has no dated entry`); seven or more days before today →
+  `warn` (`last harness review <date>, <n> days ago; weekly review due`); else `ok` with the same prefix.
+  Listed next to `review-by`. The manager reads the same date at turn start (`manager.md` → The weekly review).
+- `ledger`, a line after `Overkill candidates:`: `Named in fix notes:`. Over the window's rows with step
+  `review` and outcome `fix` or `escalated`, or step `fix`, the `note` cell is scanned for harness file names
+  (`[\w-]+.md` with an optional `#anchor`, a `.claude/rules/` or `docs/harness/` prefix stripped), counted
+  per name, sorted by count then name: `core.md 3  verification.md 1`, or `none`. The convention that makes
+  it useful is in `model-policy.md` → The ledger: the note names the file behind the finding.
 
 ## 9. Addendum (owner, 2026-10-26): `init` and the `fresh-init` launcher
 
