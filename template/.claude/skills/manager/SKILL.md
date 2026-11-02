@@ -97,8 +97,9 @@ pause:
    `dispatch-without-stack` → a task whose branch database is not running yet waits.
 2. Budget: when the 5-hour window is past 85 % and resets in more than 20 minutes, dispatch nothing new;
    write the board and say so.
-3. At most three subagents at once, one builder per branch. Two tasks never share a `Touches:` path
-   (owner, 2026-10-22).
+3. At most three subagents at once, one builder per branch. Two tasks never share a `Touches:` code or test path
+   (owner, 2026-10-22); a documentation file that several tasks must update may be named by several running tasks,
+   each builder resolving a doc conflict on its branch when it merges master (owner, 2026-10-27).
 4. **A task's first dispatch:** claim it (`IN_PROGRESS`, `Owner: claude:manager`, the claim commit,
    `git worktree add`, the copy step of "Prepare a worktree"). The builder runs the install step and starts
    the branch database when the plan says so.

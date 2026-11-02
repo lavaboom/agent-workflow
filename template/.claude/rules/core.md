@@ -13,11 +13,13 @@ review-by: 2027-01-31
 - **What done means.** A task is done when its acceptance checks pass and a separate reviewer says `APPROVE`.
   "Looks right" and "tests I did not run" are not evidence (`docs/harness/verification.md`).
 - **Stay in your lane.** Touch only your task's `Touches:` paths; widen `Touches:` in `status.md` and say so,
-  or write a follow-up task (`docs/harness/building.md`). Never edit a path another running task names
-  (owner, 2026-10-22).
+  or write a follow-up task (`docs/harness/building.md`). Never edit a code or test path another running task names
+  (owner, 2026-10-22); a documentation file that several tasks must update (an engine's design notes, a feature's
+  `README`) may be shared, each builder resolving a doc conflict on its branch when it merges master (owner, 2026-10-27).
 - **Write it down, not in chat.** Decisions go in the spec or `status.md` with a tag `(owner, date)` or
   `(manager, date)`; follow-ups go under `For the roadmap:`; owner questions become `Q-` items. Chat is lost
-  at the next session.
+  at the next session. A `Q-` item carries everything the owner needs inline (the SQL block, the command, the
+  URL, the expected figures), never a pointer to a status file or the board (owner, 2026-10-27).
 - **Commit your own paths only.** `git commit -- <paths>`; never `git add -A`, `git add .` or `commit -a` in
   the main checkout. Nothing is committed on master while a merge batch runs (owner, 2026-10-22).
 - **A worker never merges, pushes or opens a PR.** It sets `REVIEW` and stops. Pushing follows the "Who

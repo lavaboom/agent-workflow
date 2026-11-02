@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.1.3 (2026-11-02)
+
+Three rules learnt in the first week of use, upstreamed from a project at its weekly review: a documentation
+file that several running tasks must update may be shared (code and test paths never are; `core.md`, the
+manager skill's step 3); a `Q-` item carries everything the owner needs inline, never a pointer (`core.md`);
+a builder never `git stash`es in a worktree, `refs/stash` being one stack for every worktree (`building.md`
+step 5).
+
 ## v2.1.2 (2026-10-27)
 
 The weekly review now prompts itself: `check` reports `review-due` when the newest `review-log.md` entry is

@@ -54,7 +54,9 @@ becomes a `BACKLOG` task with a deadline, never a comment or a "later" (owner, 2
 3. Commit everything. Set `Status: REVIEW`, `Owner: none (waiting for a reviewer)` (or the owner the
    dispatch named), with the last commit and the evidence.
 4. Clean state (`session.md`): no debug leftovers, the readiness command passes, the worktree is left in place.
-5. Stop. Don't merge, don't push, don't remove the worktree. Say the task is ready for review.
+5. Stop. Don't merge, don't push, don't remove the worktree. Never `git stash` in a worktree: `refs/stash` is one
+   stack shared by every worktree of the repository, so two builders stashing at once pop each other's changes
+   (incident, 2026-10-28); to test without a change, commit it or copy the files aside. Say the task is ready for review.
 
 A follow-up noticed on the way is written down as a task when it is noticed (`task-flow.md` → Small tasks),
 or listed under `For the roadmap:` when you cannot commit to master.
