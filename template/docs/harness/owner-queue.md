@@ -24,6 +24,11 @@ ones blocking the most work first.
   recommendation, how to answer. A docs commit on master naming only that file. On a task branch, put it
   under `For the roadmap:` in `status.md` instead. A task that can't move without the answer is `BLOCKED`
   with `Blocked on: Q-NNN`.
-- **When the owner answers** (in chat or in the file): record the answer and date on the item, move it to
-  "Answered", write the decision into the spec or doc it belongs in, unblock the tasks that name it.
+- **When the owner answers** (in chat or in the file): in one commit, record the answer and date on the item,
+  move it to "Answered", write the decision into the spec or doc it belongs in, and mark every other copy
+  done (the manager board's **Needs the owner** line, a task's `Blocked on:`); unblock the tasks that name it.
+  An answer given in a tab that cannot commit on master (a builder, a task session) is written under
+  `For the roadmap:` in that task's `status.md` as "the owner answered Q-NNN: …" and said in the report, so the
+  manager records it (owner, 2026-11-04: an answered item listed as open a second time is the failure this
+  guards against).
 - Numbering: one past the highest `Q-` number, checked again right before committing.

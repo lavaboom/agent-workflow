@@ -1,5 +1,18 @@
 # Changelog
 
+## v2.1.4 (2026-11-09)
+
+Upstreamed from a project at its second weekly review. The always-on rule `.claude/rules/claude-code.md` is
+removed: a week with it switched off (122 builds) showed no builder asking, merging or dispatched without a
+model, and each of its sentences already lives in the role files, `core.md`, `session.md` or the manager
+skill; `sync --prune` removes a project's copy. The manager skill gains four rules: an answered `Q-` item is
+marked done in every copy in one commit (the board's line too; `owner-queue.md` says the same); a queue row
+that needs a rule or a short spec is the manager's work, and an empty queue is rebuilt from the backlog before
+it is called empty; a ruling about what the code does is checked against the code first and cites its
+`file:line`; a plan task names the callers of a function it changes and every writer of a table whose writers
+change. The worktree is cut after the claim commit. A builder's log goes under its own scratchpad
+(`dispatch-prompts.md`).
+
 ## v2.1.3 (2026-11-02)
 
 Three rules learnt in the first week of use, upstreamed from a project at its weekly review: a documentation

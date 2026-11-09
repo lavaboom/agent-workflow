@@ -24,7 +24,8 @@ values into the prompt, never "see the settings".
    files, signatures, tests), or the small task's `status.md` pasted.
 3. **The tier and its checks:** the tier name and every command from `AGENTS.md`'s tier table, plus the
    integration or browser files this task names, with expected results. "Run exactly these; record each
-   command and its result under `Evidence:`; run nothing the tier does not name."
+   command and its result under `Evidence:`; run nothing the tier does not name." A log the builder writes (a whole-suite run) goes under
+   its own scratchpad, never a shared `/tmp` path: two builders overwrote each other's there (2026-11-04).
 4. **Decisions already made** that the task touches, each with its tag `(owner, date)` /
    `(manager, date)`, so the builder does not re-decide them.
 5. **Rules by name:** the ones the "Rules every builder prompt names" setting lists, each with the one line

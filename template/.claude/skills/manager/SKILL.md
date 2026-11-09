@@ -27,7 +27,9 @@ file or a diff.
 
 1. Read `docs/manager/board.md` (its `Next step:` and `Current issues:` first), the In progress section of
    `docs/ROADMAP.md`, the open `Q-` headings of `docs/OWNER_QUEUE.md`
-   (`grep -n "^### Q-" docs/OWNER_QUEUE.md`), and `docs/harness/lessons.md` when a plan is coming. Read the
+   (`grep -n "^### Q-" docs/OWNER_QUEUE.md`), and `docs/harness/lessons.md` when a plan is coming. A `Q-`
+   named under the board's **Needs the owner** without a `(done …)` prefix that the queue lists under Answered is
+   stale: prefix it now, in this turn's first docs commit (owner, 2026-11-04). Read the
    date of the newest `## ` entry in `docs/harness/review-log.md`: seven or more days old means the weekly
    harness review is due (`<Harness CLI> check` says the same as `review-due`).
 2. Run the capacity command (Workflow settings) when the project has one (two notes, owner, 2026-10-22:
@@ -51,7 +53,7 @@ file or a diff.
 | "status", "where are we", "what's blocking" | The status brief, nothing else |
 | "continue", "go", "next", "pick up task-NNN" | Run the queue (a named task goes first) |
 | "how does X work" | Dispatch `explorer` (Haiku for a lookup, Sonnet for an explanation); answer from its conclusion with file links. Open nothing yourself. |
-| An answer to a question you asked | Record it where it belongs (brief, spec, `Q-` item), unblock, continue |
+| An answer to a question you asked | Record it in every copy in one commit: the `Q-` item (answer, date, moved to Answered), the board's **Needs the owner** line (prefixed `(done <time> UTC: <answer>)`, as the done items there are) and the spec or doc the decision belongs in; unblock, continue. The status brief's `Needs you` line comes from the Open headings of `docs/OWNER_QUEUE.md`, never from the board (owner, 2026-11-04: Q-091 stayed listed on the board for twelve hours after its answer was recorded in the queue) |
 | "review the harness", or the review is due (step 1 of every turn) | `/harness-review`. Due with `Autopilot: on` and nothing Running: run it before the queue. Due otherwise: say so in the status brief and ask once per tab; run it on the yes. |
 | "pause", "stop" | `Autopilot: off` on the board; let running subagents finish and record them |
 
@@ -81,6 +83,9 @@ plan, read `docs/harness/lessons.md`. Each plan task:
 - names its **builder model and effort** from the ladder, and why when it is not Sonnet;
 - is Sonnet-ready when it says Sonnet: exact files, signatures, test names, decisions with tags, the one
   rule that bites (`model-policy.md` → What makes a task Sonnet-ready);
+- names every caller of a function it changes with those callers' test files, and every writer of a table
+  whose writers change, deletes and TS paths included: an explorer's grep, pasted into the task (review of
+  2026-11-09: three plan tasks of one release each stopped on a caller or writer the spec had missed);
 - is numbered; the plan's header says `Needs a branch database: yes/no` and `Paid runs: none` or each run
   with its estimate.
 
@@ -90,8 +95,11 @@ and effort, branch database, `After:`. Plan tasks run in plan order on the task'
 
 ## Running the queue
 
-Resume rows first, then the Queue in order. Loop until nothing is left, a stop below, or the owner says
-pause:
+Resume rows first, then the Queue in order. A row that says "a rule first", "a decision first" or "needs a
+short spec" is the manager's work this turn (rule or write it, then dispatch), never a stop; only "a user hits
+it" and an owner decision wait. When the Queue has no dispatchable row, rebuild it from `docs/tasks/active/`
+(every `BACKLOG` task whose `After:` is met) before telling the owner the queue is empty (owner, 2026-11-03).
+Loop until nothing is left, a stop below, or the owner says pause:
 
 1. Capacity (when the project has the command): `wait` → record, tell the owner, dispatch nothing;
    `dispatch-without-stack` → a task whose branch database is not running yet waits.
@@ -101,7 +109,8 @@ pause:
    (owner, 2026-10-22); a documentation file that several tasks must update may be named by several running tasks,
    each builder resolving a doc conflict on its branch when it merges master (owner, 2026-10-27).
 4. **A task's first dispatch:** claim it (`IN_PROGRESS`, `Owner: claude:manager`, the claim commit,
-   `git worktree add`, the copy step of "Prepare a worktree"). The builder runs the install step and starts
+   `git worktree add`, the copy step of "Prepare a worktree"), in that order: a worktree cut before the claim
+   commit conflicts on `status.md` and the merge batch skips the branch. The builder runs the install step and starts
    the branch database when the plan says so.
 5. Dispatch the builder with the builder recipe: the `builder` role, **model and effort from the plan
    task**, in the background. Add or update the **Running** row.
@@ -131,6 +140,10 @@ A group of small tasks runs the same way: one builder on the lead's branch, one 
 `docs/harness/manager.md` → Rulings: the manager rules when the brief, the product principles or
 "no user would notice" settle it, tagged `(manager, <date>)` under the board's **Rulings**; the owner
 decides experiences the principles don't settle, money, what is stored, and anything needing their accounts.
+A ruling that says what the code does, what is stored or who calls a function is checked against the code
+first: an explorer (Haiku for a lookup) gets the claim, and the ruling cites the `file:line` it rests on. A
+task's own summary of the code and "the same as its sibling" are hypotheses (review of 2026-11-09: four
+blocked rounds in one week came from rulings written without that lookup).
 A ruling for a task with a branch travels to the builder as a resume message ("add to the spec under
 Decisions: …, set `IN_PROGRESS`, continue"); before a branch exists the manager edits the spec on master.
 

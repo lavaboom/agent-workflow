@@ -1,5 +1,5 @@
 {
-  "version": "2.1.3",
+  "version": "2.1.4",
   "files": [
     { "path": "AGENTS.md", "policy": "owned" },
     { "path": "ecc-install.json", "policy": "owned" },
@@ -8,7 +8,6 @@
 
     { "path": ".claude/settings.json", "policy": "owned" },
     { "path": ".claude/rules/core.md", "policy": "managed" },
-    { "path": ".claude/rules/claude-code.md", "policy": "managed" },
     { "path": ".claude/rules/tasks.md", "policy": "managed" },
     { "path": ".claude/rules/hard-areas.md", "policy": "owned" },
     { "path": ".claude/rules/phase-pre-launch.md", "policy": "owned" },
